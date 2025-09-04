@@ -1,0 +1,70 @@
+{
+  "loginTitle": "Login Account",
+  "loginWelcomeMessage": "Hello, Welcome back to your account.",
+  "loginPhoneNumber": "Phone Number",
+  "loginRequestOtp": "Request OTP",
+  "loginEnterMobileNumberPlaceholder": "Enter Mobile Number",
+  "invalidMobileNumber": "Please enter a valid 10-digit mobile number.",
+
+  "createButtonTitle": "Create",
+  "signinPageTitle": "Signin",
+
+  "signinButtonTitle": "Sign In",
+  "signinProgressSendingOtp": "Send otp...",
+
+  "verifyOtpPageTitle": "Verification code",
+  "verifyOtpPageSubTitle": "We have sent OTP code verification to your mobile no",
+  "verifyOtpEnterOtpHint": "Enter OTP",
+  "verifyOtpButtonTitle": "Verify",
+  "verifyOtpDidNotReceiveOtp": "Didn’t get OTP Code ?",
+  "verifyOtpResendCode": "Resend Code",
+  "verifyOtpProgressVerifying": "Verifying OTP...",
+
+  "accountSetupPageTitle": "Account setup",
+  "accountSetupPageSubTitle": "Let's set up your account.",
+  "accountSetupName": "Name",
+  "accountSetupEmail": "Email",
+  "accountSetupButtonTitle": "Continue",
+  "accountSetupNameHint": "Enter Name",
+  "accountSetupEmailHint": "Enter Email",
+  "accountSetupProgressVerifying": "Account Setup Is Processing...",
+
+
+  "signupPageTitle": "Sign Up",
+  "signupEnterNameHint": "Enter Name",
+  "signupEnterEmailHint": "Enter Email",
+  "signupEnterMobileHint": "Enter Mobile",
+  "signupButtonTitle": "Sign Up",
+  "signupProgressCreatingUser": "Creating user...",
+  "signupMobileExistsMessage": "Mobile number already exists",
+
+  "profilePageTitle": "Profile",
+  "profileLogoutButtonTitle": "Logout",
+  "profileProgressLogout": "Logout...",
+
+  "createHubPageTitle": "Create Hub",
+  "createHubButtonTitle": "Create",
+
+  "editHubPageTitle": "Edit Hub",
+  "editHubHubIdLabel": "Hub ID",
+
+  "hubsPageTitle": "Hubs",
+  "hubsCreateHubButtonTitle": "Create Hub",
+  "hubsEditHubButtonTitle": "Edit Hub",
+
+  "bottomNavHubs": "Hubs",
+  "bottomNavCars": "Cars",
+  "bottomNavUsers": "Users",
+  "bottomNavProfile": "Profile",
+
+  "usersPageTitle": "Users",
+  "usersNoUserMessage": "No users!",
+  "usersProgressCreating": "Creating user...",
+  "usersProgressDeleting": "Deleting user...",
+  "usersProgressUpdating": "Updating user...",
+  "usersSuccessfullyCreated": "Successfully created",
+  "usersSuccessfullyDeleted": "Successfully deleted",
+  "usersSuccessfullyUpdated": "Successfully updated",
+
+  "carsPageTitle": "Cars"
+}

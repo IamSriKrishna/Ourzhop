@@ -1,0 +1,38 @@
+{ "permissions": {
+    "allow": [
+      "mcp__dart__add_roots",
+      "mcp__serena__get_symbols_overview",
+      "mcp__serena__list_dir",
+      "mcp__serena__search_for_pattern",
+      "mcp__sequential-thinking__sequentialthinking",
+      "mcp__context7__resolve-library-id",
+      "mcp__context7__get-library-docs",
+      "mcp__serena__find_symbol"
+    ],
+    "deny": [],
+    "ask": []
+  },
+  "hooks": {
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "osascript -e 'display notification \"Claude response completed!\" with title \"eshop-seller-ui - Claude Code\" sound name \"Glass\"' || echo '[Alert] Claude response complete'"
+          }
+        ]
+      }
+    ],
+    "Notification": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "osascript -e 'display notification \\\"Claude response completed!\\\" with title \\\"eshop-seller-ui - Claude Code\\\" sound name \\\"Glass\\\"' || echo '[Alert] Claude response complete'"
+          }
+        ]
+      }
+    ]
+  }
+}

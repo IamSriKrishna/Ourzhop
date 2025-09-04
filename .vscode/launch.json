@@ -1,0 +1,24 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "eshop-customer-ui (debug verbose)",
+      "request": "launch",
+      "type": "dart",
+      "args": ["--verbose", "--track-widget-creation"]
+    },
+    {
+      "name": "eshop-customer-ui (profile mode)",
+      "request": "launch",
+      "type": "dart",
+      "flutterMode": "profile",
+      "args": ["--trace-skia"]
+    },
+    {
+      "name": "eshop-customer-ui (release mode)",
+      "request": "launch",
+      "type": "dart",
+      "flutterMode": "release"
+    }
+  ]
+}

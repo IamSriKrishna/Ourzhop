@@ -1,0 +1,54 @@
+{
+  "createButtonTitle": "உருவாக்கு",
+  "signinPageTitle": "உள்நுழைய",
+  "signinEnterMobileNumberPlaceholder": "மொபைல் எண்ணை உள்ளிடவும்",
+  "signinButtonTitle": "உள்நுழையவும்",
+  "signinProgressSendingOtp": "ஓடிபி அனுப்பப்படுகிறது...",
+
+  "verifyOtpPageTitle": "ஓடிபி சரிபார்க்கவும்",
+   "verifyOtpPagesubTitle": "We have sand  OTP code verification to your mobile no ",
+  "verifyOtpEnterOtpHint": "ஓடிபி உள்ளிடவும்",
+  "verifyOtpButtonTitle": "ஓடிபி சரிபார்க்கவும்",
+ "verifyOtpdidnotreceiveotp": "Didn’t get OTP Code ?",
+   "verifyOtpresendcode": "Resend Code",
+  "verifyOtpProgressVerifying": "ஓடிபி சரிபார்க்கப்படுகிறது...",
+
+  "signupPageTitle": "பதிவு செய்ய",
+  "signupEnterNameHint": "பெயர் உள்ளிடவும்",
+  "signupEnterEmailHint": "மின்னஞ்சல் உள்ளிடவும்",
+  "signupEnterMobileHint": "மொபைல் எண்ணை உள்ளிடவும்",
+  "signupButtonTitle": "பதிவு செய்யவும்",
+  "signupProgressCreatingUser": "பயனர் உருவாக்கப்படுகிறார்...",
+  "signupMobileExistsMessage": "மொபைல் எண் ஏற்கனவே உள்ளது",
+
+  "profilePageTitle": "சுயவிவரம்",
+  "profileLogoutButtonTitle": "வெளியேறு",
+  "profileProgressLogout": "வெளியேறு...",
+
+  "createHubPageTitle": "ஹப் உருவாக்கு",
+  "createHubButtonTitle": "உருவாக்கு",
+
+  "editHubPageTitle": "ஹப் திருத்து",
+  "editHubHubIdLabel": "ஹப் ஐடி",
+
+  "hubsPageTitle": "ஹப்கள்",
+  "hubsCreateHubButtonTitle": "ஹப் உருவாக்கு",
+  "hubsEditHubButtonTitle": "ஹப் திருத்து",
+
+  "bottomNavHubs": "ஹப்கள்",
+  "bottomNavCars": "கார்கள்",
+  "bottomNavUsers": "பயனர்கள்",
+  "bottomNavProfile": "சுயவிவரம்",
+
+  "usersPageTitle": "பயனர்கள்",
+  "usersNoUserMessage": "பயனர்கள் இல்லை!",
+  "usersProgressCreating": "பயனர் உருவாக்கப்படுகிறார்...",
+  "usersProgressDeleting": "பயனர் அழிக்கப்படுகிறார்...",
+  "usersProgressUpdating": "பயனர் புதுப்பிக்கப்படுகிறார்...",
+  "usersSuccessfullyCreated": "வெற்றிகரமாக உருவாக்கப்பட்டது",
+  "usersSuccessfullyDeleted": "வெற்றிகரமாக அழிக்கப்பட்டது",
+  "usersSuccessfullyUpdated": "வெற்றிகரமாக புதுப்பிக்கப்பட்டது",
+  
+  "carsPageTitle": "கார்கள்"
+}
+

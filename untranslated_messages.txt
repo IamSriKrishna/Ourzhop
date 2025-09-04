@@ -1,0 +1,21 @@
+{
+  "ta": [
+    "loginTitle",
+    "loginWelcomeMessage",
+    "loginPhoneNumber",
+    "loginRequestOtp",
+    "loginEnterMobileNumberPlaceholder",
+    "invalidMobileNumber",
+    "verifyOtpPageSubTitle",
+    "verifyOtpDidNotReceiveOtp",
+    "verifyOtpResendCode",
+    "accountSetupPageTitle",
+    "accountSetupPageSubTitle",
+    "accountSetupName",
+    "accountSetupEmail",
+    "accountSetupButtonTitle",
+    "accountSetupNameHint",
+    "accountSetupEmailHint",
+    "accountSetupProgressVerifying"
+  ]
+}
