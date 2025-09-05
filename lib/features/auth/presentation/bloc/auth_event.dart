@@ -2,22 +2,14 @@ abstract class AuthEvent {}
 
 class LoginRequested extends AuthEvent {
   final String mobileNumber;
-  final String password;
 
-  LoginRequested(this.mobileNumber, {required this.password});
-}
-
-class RegisterRequested extends AuthEvent {
-  final String mobileNumber;
-
-  RegisterRequested(this.mobileNumber);
+  LoginRequested(this.mobileNumber);
 }
 
 class ValidationErrorTriggered extends AuthEvent {
   final String errorMessage;
-  final String? field; // Add field parameter for specific field validation
 
-  ValidationErrorTriggered(this.errorMessage, {this.field});
+  ValidationErrorTriggered(this.errorMessage);
 }
 
 class ClearValidationError extends AuthEvent {}
@@ -32,10 +24,4 @@ class AccountSetupRequested extends AuthEvent {
   final String name;
   final String email;
   AccountSetupRequested(this.name, this.email);
-}
-
-// Add SetPasswordRequested event
-class SetPasswordRequested extends AuthEvent {
-  final String password;
-  SetPasswordRequested(this.password);
 }

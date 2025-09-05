@@ -43,7 +43,7 @@ class AccountSetupScreen extends StatelessWidget {
                     if (state is AccountSetupSuccess) {
                       WidgetsBinding.instance.addPostFrameCallback((_) {
                         context.go(
-                          AppRoutes.home,
+                          AppRoutes.locationSelection,
                         );
                       });
                     } else if (state is AccountSetupFailure) {

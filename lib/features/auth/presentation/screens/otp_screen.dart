@@ -23,214 +23,14 @@ import 'package:customer_app/core/themes/app_style.dart';
 import 'package:customer_app/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:customer_app/features/auth/presentation/bloc/auth_event.dart';
 import 'package:customer_app/features/auth/presentation/bloc/auth_state.dart';
+import 'package:logger/logger.dart';
 
-class OtpScreen extends StatefulWidget {
+class OtpScreen extends StatelessWidget {
   final String mobileNumber;
-  final String? sourceScreen;
-
-  const OtpScreen({
-    super.key,
-    required this.mobileNumber,
-    this.sourceScreen,
-  });
-
-  @override
-  State<OtpScreen> createState() => _OtpScreenState();
-}
-
-class _OtpScreenState extends State<OtpScreen>
-    with SingleTickerProviderStateMixin {
   final GlobalKey<FormState> _otpFormKey = GlobalKey<FormState>();
   final TextEditingController _otpController = TextEditingController();
 
-  late AnimationController _animationController;
-  late Animation<Offset> _slideAnimation;
-  late Animation<double> _fadeAnimation;
-  bool _showTopToast = false;
-  String? _currentOtp;
-
-  @override
-  void initState() {
-    super.initState();
-    _setupAnimations();
-
-    // Show OTP toast when screen loads
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _showOtpTopToast();
-    });
-  }
-
-  void _setupAnimations() {
-    _animationController = AnimationController(
-      duration: const Duration(milliseconds: 500),
-      vsync: this,
-    );
-
-    _slideAnimation = Tween<Offset>(
-      begin: const Offset(0, -1),
-      end: Offset.zero,
-    ).animate(CurvedAnimation(
-      parent: _animationController,
-      curve: Curves.elasticOut,
-    ));
-
-    _fadeAnimation = Tween<double>(
-      begin: 0.0,
-      end: 1.0,
-    ).animate(CurvedAnimation(
-      parent: _animationController,
-      curve: Curves.easeInOut,
-    ));
-  }
-
-  /// Shows top notification toast with the generated OTP
-  void _showOtpTopToast() {
-    final authBloc = context.read<AuthBloc>();
-    final generatedOtp = authBloc.generatedOtp;
-
-    if (generatedOtp != null) {
-      setState(() {
-        _currentOtp = generatedOtp;
-        _showTopToast = true;
-      });
-
-      _animationController.forward();
-
-      // Auto hide after 6 seconds
-      Future.delayed(const Duration(seconds: 6), () {
-        _hideTopToast();
-      });
-    }
-  }
-
-  void _hideTopToast() {
-    _animationController.reverse().then((_) {
-      if (mounted) {
-        setState(() {
-          _showTopToast = false;
-          _currentOtp = null;
-        });
-      }
-    });
-  }
-
-  Widget _buildTopToast() {
-    if (!_showTopToast || _currentOtp == null) return const SizedBox.shrink();
-
-    return Positioned(
-      top: 0,
-      left: 0,
-      right: 0,
-      child: SlideTransition(
-        position: _slideAnimation,
-        child: FadeTransition(
-          opacity: _fadeAnimation,
-          child: Container(
-            margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 50),
-            padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: [
-                  Colors.green.shade600,
-                  Colors.green.shade700,
-                ],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-              ),
-              borderRadius: BorderRadius.circular(12),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black26,
-                  blurRadius: 8,
-                  offset: const Offset(0, 4),
-                ),
-              ],
-            ),
-            child: Row(
-              children: [
-                Container(
-                  padding: const EdgeInsets.all(8),
-                  decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.2),
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: const Icon(
-                    Icons.security,
-                    color: Colors.white,
-                    size: 24,
-                  ),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      const Text(
-                        'Your OTP Code',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 14,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        _currentOtp!,
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                          letterSpacing: 2,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                GestureDetector(
-                  onTap: () {
-                    // Copy OTP to clipboard
-                    Clipboard.setData(ClipboardData(text: _currentOtp!));
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: const Text('OTP copied to clipboard'),
-                        duration: const Duration(seconds: 2),
-                        backgroundColor: Colors.green.shade600,
-                      ),
-                    );
-                  },
-                  child: Container(
-                    padding: const EdgeInsets.all(8),
-                    decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.2),
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: const Icon(
-                      Icons.copy,
-                      color: Colors.white,
-                      size: 20,
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 8),
-                GestureDetector(
-                  onTap: _hideTopToast,
-                  child: Container(
-                    padding: const EdgeInsets.all(4),
-                    child: const Icon(
-                      Icons.close,
-                      color: Colors.white,
-                      size: 20,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
-  }
+  OtpScreen({super.key, required this.mobileNumber});
 
   @override
   Widget build(BuildContext context) {
@@ -249,7 +49,7 @@ class _OtpScreenState extends State<OtpScreen>
                 child: SafeArea(
                   child: SingleChildScrollView(
                     padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                    child: ConstrainedBox(
+                    child:  ConstrainedBox(
                       constraints: BoxConstraints(
                         minHeight: MediaQuery.of(context).size.height -
                             MediaQuery.of(context).padding.top -
@@ -263,28 +63,28 @@ class _OtpScreenState extends State<OtpScreen>
                             children: [
                               // Header Image Section - Centered
                               _buildHeaderSection(context),
-
+                        
                               // Title Section - Left aligned
                               _buildTitleSection(context),
-
+                        
                               const SizedBox(height: 20.0),
-
+                        
                               // Phone Number Section - Left aligned
                               _buildPhoneNumberSection(context),
-
+                        
                               const SizedBox(height: 30.0),
-
+                        
                               // OTP Input Section - Centered
                               _buildOtpInputSection(context),
-
+                        
                               const SizedBox(height: 20.0),
-
+                        
                               // Resend Section - Centered
                               _buildResendSection(context),
-
+                        
                               // Spacer to push button to bottom
                               const Spacer(),
-
+                        
                               // Bottom Section - Button and Login Prompt
                               _buildBottomSection(context),
                             ],
@@ -296,8 +96,6 @@ class _OtpScreenState extends State<OtpScreen>
                 ),
               ),
             ),
-            // Top Toast Notification
-            _buildTopToast(),
             // Loading overlay
             if (state is OtpVerifyLoading)
               ProgressDialog(
@@ -348,7 +146,7 @@ class _OtpScreenState extends State<OtpScreen>
   /// Builds the phone number section
   Widget _buildPhoneNumberSection(BuildContext context) {
     return AppPhoneNumberDisplay(
-      phoneNumber: widget.mobileNumber,
+      phoneNumber: mobileNumber,
       onEditTapped: () => context.go(AppRoutes.login),
     );
   }
@@ -408,42 +206,24 @@ class _OtpScreenState extends State<OtpScreen>
             ),
           ),
           const SizedBox(height: 20.0),
-          // Login prompt
-          AppBottomTextPrompt(
-            promptText: "Already have an account?",
-            actionText: "Login",
-            onActionTapped: () => context.go(AppRoutes.login),
-          ),
+          
         ],
       ),
     );
   }
-/// Handles auth state changes
+
+  /// Handles auth state changes
   void _handleAuthStateChange(BuildContext context, AuthState state) {
     switch (state) {
       case OtpVerifySuccess():
-        // Navigate based on source screen
-        if (widget.sourceScreen == 'register') {
-          // User came from registration - go to set password
-          _navigateTo(context, AppRoutes.setPassword);
-        } else if (widget.sourceScreen == 'login') {
-          // User came from login - go to account setup
-          _navigateTo(context, AppRoutes.accountSetup);
-        } else {
-          // Default fallback - check if user is new
-          _navigateTo(context, AppRoutes.accountSetup);
-        }
+        _navigateTo(context, AppRoutes.home);
         break;
 
       case IsNewUser():
-        // This case handles scenarios where we need to check user status
-        if (widget.sourceScreen == 'register') {
-          // New user from registration - go to set password
-          _navigateTo(context, AppRoutes.setPassword);
-        } else {
-          // Existing user or login flow - go to account setup
-          _navigateTo(context, AppRoutes.accountSetup);
-        }
+        _navigateTo(context, AppRoutes.accountSetup);
+        break;
+      case NeedsLocationSelection():
+        _navigateTo(context, AppRoutes.locationSelection);
         break;
 
       case OtpVerifyFailure():
@@ -465,19 +245,15 @@ class _OtpScreenState extends State<OtpScreen>
   void _onOtpPressed(BuildContext context) {
     if (!(_otpFormKey.currentState?.validate() ?? false)) return;
     final otpInput = _otpController.text.trim();
-    final formattedMobile = "+91${widget.mobileNumber}";
+    final formattedMobile = mobileNumber.replaceAll(' ', '');
+    Logger().i(formattedMobile);
     context.read<AuthBloc>().add(OtpVerifyRequested(formattedMobile, otpInput));
   }
 
   /// Handles the resend OTP button press
   void _onResendPressed(BuildContext context) {
-    final formattedMobile = "+91${widget.mobileNumber}";
-    context.read<AuthBloc>().add(LoginRequested(formattedMobile, password: ""));
-
-    // Show new OTP toast after resend
-    Future.delayed(const Duration(milliseconds: 800), () {
-      _showOtpTopToast();
-    });
+    final formattedMobile = "+91$mobileNumber";
+    context.read<AuthBloc>().add(LoginRequested(formattedMobile));
   }
 
   /// Navigates to specified route
@@ -485,12 +261,5 @@ class _OtpScreenState extends State<OtpScreen>
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.go(route);
     });
-  }
-
-  @override
-  void dispose() {
-    _animationController.dispose();
-    _otpController.dispose();
-    super.dispose();
   }
 }

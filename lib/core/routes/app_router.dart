@@ -1,8 +1,6 @@
 // lib/router/app_router.dart
 
 // Flutter imports:
-import 'package:customer_app/features/auth/presentation/screens/register_screen.dart';
-import 'package:customer_app/features/auth/presentation/screens/set_password_screen.dart';
 import 'package:customer_app/features/auth/presentation/screens/location_selection_screen.dart';
 import 'package:flutter/material.dart';
 
@@ -21,6 +19,8 @@ import 'package:customer_app/features/auth/presentation/screens/otp_screen.dart'
 import 'package:customer_app/features/home/presentation/screens/home_content.dart';
 import 'package:customer_app/features/home/presentation/screens/home_screen.dart';
 import 'package:customer_app/features/pages/page.dart';
+
+// Project imports
 
 class AppRouter {
   static final GlobalKey<NavigatorState> rootNavigatorKey =
@@ -80,33 +80,13 @@ class AppRouter {
           builder: (context, state) => LoginScreen(),
         ),
 
-        GoRoute(
-          path: AppRoutes.register,
-          name: 'register',
-          builder: (context, state) => RegisterScreen(),
-        ),
-
         // otp  Route (Outside ShellRoute)
         GoRoute(
           path: AppRoutes.otp,
           name: 'otp',
-          builder: (context, state) {
-            // Handle both old and new navigation patterns
-            if (state.extra is String) {
-              // Old pattern - just mobile number
-              return OtpScreen(mobileNumber: state.extra as String);
-            } else if (state.extra is Map<String, dynamic>) {
-              // New pattern - with source tracking
-              final extraData = state.extra as Map<String, dynamic>;
-              return OtpScreen(
-                mobileNumber: extraData['mobileNumber'] as String,
-                sourceScreen: extraData['sourceScreen'] as String?,
-              );
-            } else {
-              // Fallback
-              return OtpScreen(mobileNumber: '');
-            }
-          },
+          builder: (context, state) => OtpScreen(
+            mobileNumber: state.extra as String,
+          ),
         ),
 
         // account setup  Route (Outside ShellRoute)
@@ -117,70 +97,80 @@ class AppRouter {
         ),
 
         GoRoute(
-          path: AppRoutes.setPassword,
-          name: 'set-password',
-          builder: (context, state) => SetPasswordScreen(),
-        ),
-
-        // Location Selection Route (Outside ShellRoute)
-        GoRoute(
           path: AppRoutes.locationSelection,
           name: 'location-selection',
           builder: (context, state) => LocationSelectionScreen(),
         ),
-      ];
+      ];static Future<String?> _redirectLogic(
+    BuildContext context, GoRouterState state) async {
+  final logger = AppLogger();
+  final authService = AuthPreferenceService();
 
-  /// Determines whether to redirect the user based on authentication and user status.
-  /// Returns a string URI to redirect to, or null to proceed to the requested route.
-  static Future<String?> _redirectLogic(
-      BuildContext context, GoRouterState state) async {
-    final logger = AppLogger();
-    final authService = AuthPreferenceService();
+  // Define constant paths
+  const String loginPath = AppRoutes.login;
+  const String verifyOtpPath = AppRoutes.otp;
+  const String accountSetupPath = AppRoutes.accountSetup;
+  const String locationSelectionPath = AppRoutes.locationSelection;
+  const String homePath = AppRoutes.home;
 
-    // Define constant paths
-    const String loginPath = AppRoutes.login;
-    const String registerPath = AppRoutes.register;
-    const String verifyOtpPath = AppRoutes.otp;
-    const String accountSetupPath = AppRoutes.accountSetup;
-    const String setPasswordPath = AppRoutes.setPassword;
-    const String locationSelectionPath = AppRoutes.locationSelection;
+  final currentPath = state.uri.toString();
 
-    final currentPath = state.uri.toString();
+  try {
+    final bool isLoggedIn = await authService.isLoggedIn();
+    final bool isUserNew = await authService.isUserNew();
+    final bool hasSelectedLocation = await authService.hasSelectedLocation();
 
-    try {
-      // Fetch login status and user data separately with explicit typing
-      final bool isLoggedIn = await authService.isLoggedIn();
-      final bool isUserNew = await authService.isUserNew();
+    logger.info('Redirect check - '
+        'LoggedIn: $isLoggedIn, '
+        'IsNew: $isUserNew, '
+        'HasLocation: $hasSelectedLocation, '
+        'CurrentPath: $currentPath');
 
-      // Define public routes that don't require authentication
-      // Include all auth-related routes that should be accessible during auth flow
-      final publicRoutes = [loginPath, registerPath, verifyOtpPath, setPasswordPath, accountSetupPath, locationSelectionPath];
-      final isPublicRoute = publicRoutes.contains(currentPath);
-
-      // If the user is not logged in and is not on a public route, redirect to login
-      if (!isLoggedIn && !isPublicRoute) {
+    // If not logged in, redirect to login (except for OTP verification)
+    if (!isLoggedIn) {
+      if (currentPath != verifyOtpPath && currentPath != loginPath) {
         logger.info('User not logged in. Redirecting to Sign-in page.');
         return loginPath;
       }
-
-      // If user is logged in and not new, redirect away from auth pages
-      if (isLoggedIn && isUserNew != true) {
-        final authPages = [loginPath, registerPath, setPasswordPath, accountSetupPath, locationSelectionPath];
-        if (authPages.contains(currentPath)) {
-          logger
-              .info('Logged in user accessing auth page. Redirecting to home.');
-          return AppRoutes.home;
-        }
-      }
-
-      // Allow access to the requested route - no automatic redirects for new users
-      // Let the OTP screen handle the navigation based on source
-      logger.info('Proceeding to requested route: $currentPath');
-      return null;
-    } catch (e, stackTrace) {
-      // Handle potential errors gracefully
-      logger.error('Redirect logic failed: $e', stackTrace);
-      return null;
+      return null; // Allow login and OTP screens
     }
+
+    // User is logged in - check the flow
+    if (isUserNew) {
+      // New user must complete account setup first
+      if (currentPath != accountSetupPath && currentPath != verifyOtpPath) {
+        logger.info('New user detected. Redirecting to Account Setup page.');
+        return accountSetupPath;
+      }
+      return null; // Allow account setup screen
+    }
+
+    // Existing user but hasn't selected location
+    if (!hasSelectedLocation) {
+      if (currentPath != locationSelectionPath && 
+          currentPath != accountSetupPath && 
+          currentPath != verifyOtpPath) {
+        logger.info('User needs to select location. Redirecting to Location Selection page.');
+        return locationSelectionPath;
+      }
+      return null; // Allow location selection screen
+    }
+
+    // User is logged in, not new, and has selected location
+    // Prevent going back to auth screens
+    if (currentPath == loginPath || 
+        currentPath == verifyOtpPath || 
+        currentPath == accountSetupPath || 
+        currentPath == locationSelectionPath) {
+      logger.info('User already authenticated. Redirecting to Home.');
+      return homePath;
+    }
+
+    // Allow access to the requested route
+    logger.info('Proceeding to requested route: $currentPath');
+    return null;
+  } catch (e, stackTrace) {
+    logger.error('Redirect logic failed: $e', stackTrace);
+    return null;
   }
-}
+}}

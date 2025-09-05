@@ -1,4 +1,5 @@
 // Flutter imports:
+import 'package:customer_app/core/services/auth_preference_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 // Package imports:
@@ -456,25 +457,24 @@ class _LocationSelectionScreenState extends State<LocationSelectionScreen> {
     _navigateToNextScreen(context, selectedLocation);
   }
 
-  /// Navigates to the next screen
-  void _navigateToNextScreen(BuildContext context, String location) {
-    try {
-      // Replace with your actual route
-      context.go(AppRoutes.home, extra: {
-        'selectedLocation': location,
-      });
-    } catch (e) {
-      print('Navigation error: $e');
-      // Handle navigation error
-      AppErrorDisplay.showDialog(
-        context,
-        'Navigation failed. Please try again.',
-        title: 'Error',
-        buttonLabel: 'OK',
-        onPressed: () {},
-      );
-    }
+ /// Navigates to the next screen
+void _navigateToNextScreen(BuildContext context, String location) {
+  try {
+    AuthPreferenceService().saveUserLocation(location);
+    
+    context.pushReplacement(AppRoutes.home);
+    
+  } catch (e) {
+    print('Navigation error: $e');
+    AppErrorDisplay.showDialog(
+      context,
+      'Navigation failed. Please try again.',
+      title: 'Error',
+      buttonLabel: 'OK',
+      onPressed: () {},
+    );
   }
+}
 
   /// Navigates back
   void _navigateBack(BuildContext context) {

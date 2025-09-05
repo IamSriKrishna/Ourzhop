@@ -58,7 +58,7 @@ void _registerAuthFeatures() {
   // Bloc
   serviceLocator.registerFactory(
     () => AuthBloc(
-      register: serviceLocator<RegisterUseCase>(),
+      // register: serviceLocator<RegisterUseCase>(),
       login: serviceLocator<LoginUseCase>(),
       otpVerify: serviceLocator<OtpVerifyUseCase>(),
       accountSetup: serviceLocator<AccountSetupUseCase>(),

@@ -9,6 +9,7 @@ class UserEntity {
   final bool isNewUser;
   final String? name;
   final String? email;
+  final String? location;
 
   const UserEntity({
     required this.mobileNumber,
@@ -17,5 +18,6 @@ class UserEntity {
     required this.isNewUser,
     this.name,
     this.email,
+    this.location,
   });
 }

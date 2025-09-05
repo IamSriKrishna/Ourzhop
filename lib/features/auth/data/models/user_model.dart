@@ -12,7 +12,6 @@ import 'package:customer_app/features/auth/domain/entities/user_entity.dart';
 // Domain imports:
 
 part 'user_model.g.dart';
-
 @immutable
 @JsonSerializable()
 class UserModel extends UserEntity {
@@ -23,6 +22,7 @@ class UserModel extends UserEntity {
     required super.isNewUser,
     super.name,
     super.email,
+    super.location, // Add this
   });
 
   /// Creates a [UserModel] instance from a JSON map.
