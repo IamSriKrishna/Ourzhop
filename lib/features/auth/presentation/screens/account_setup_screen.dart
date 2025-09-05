@@ -1,6 +1,6 @@
 // Flutter imports:
-
-// Flutter imports:
+import 'package:customer_app/common/widget/app_header_image.dart';
+import 'package:customer_app/core/themes/app_asset.dart';
 import 'package:flutter/material.dart';
 
 // Package imports:
@@ -23,50 +23,70 @@ class AccountSetupScreen extends StatelessWidget {
   final GlobalKey<FormState> _accountSetupFormKey = GlobalKey<FormState>();
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
         child: SingleChildScrollView(
-          padding: const EdgeInsets.all(16.0),
-          child: Form(
-            key: _accountSetupFormKey,
-            child: Column(
-              children: <Widget>[
-                _buildHeading(context),
-                _buildNameInput(context),
-                _buildEmailInput(context),
-                _buildAccountSetupButton(context),
-                const SizedBox(height: 20),
-                BlocConsumer<AuthBloc, AuthState>(
-                  listener: (context, state) {
-                    if (state is AccountSetupSuccess) {
-                      WidgetsBinding.instance.addPostFrameCallback((_) {
-                        context.go(
-                          AppRoutes.locationSelection,
-                        );
-                      });
-                    } else if (state is AccountSetupFailure) {
-                      AppErrorDisplay.showDialog(
-                        context,
-                        state.error,
-                        title: 'Account Setup Failed',
-                        buttonLabel: 'Try Again',
-                        onPressed: () => _onAccountSetupPressed(context),
-                      );
-                    }
-                  },
-                  builder: (context, state) {
-                    if (state is AccountSetupLoading) {
-                      return ProgressDialog(
-                        title: context.tr.accountSetupProgressVerifying,
-                        isProgressed: true,
-                      );
-                    }
-                    return const SizedBox.shrink();
-                  },
+          padding: const EdgeInsets.symmetric(horizontal: 20.0),
+          child: ConstrainedBox(
+            constraints: BoxConstraints(
+              minHeight: MediaQuery.of(context).size.height -
+                  MediaQuery.of(context).padding.top -
+                  MediaQuery.of(context).padding.bottom,
+            ),
+            child: IntrinsicHeight(
+              child: Form(
+                key: _accountSetupFormKey,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    _buildHeaderSection(context),
+                    _buildHeading(context),
+                    _buildNameInput(context),
+                    _buildEmailInput(context),
+                    const SizedBox(height: 20),
+                    BlocConsumer<AuthBloc, AuthState>(
+                      listener: (context, state) {
+                        if (state is AccountSetupSuccess) {
+                          WidgetsBinding.instance
+                              .addPostFrameCallback((_) {
+                            context.go(
+                              AppRoutes.locationSelection,
+                            );
+                          });
+                        } else if (state is AccountSetupFailure) {
+                          AppErrorDisplay.showDialog(
+                            context,
+                            state.error,
+                            title: 'Account Setup Failed',
+                            buttonLabel: 'Try Again',
+                            onPressed: () =>
+                                _onAccountSetupPressed(context),
+                          );
+                        }
+                      },
+                      builder: (context, state) {
+                        if (state is AccountSetupLoading) {
+                          return ProgressDialog(
+                            title:
+                                context.tr.accountSetupProgressVerifying,
+                            isProgressed: true,
+                          );
+                        }
+                        return const SizedBox.shrink();
+                      },
+                    ),
+                    
+                    // Spacer to push button to bottom
+                    const Spacer(),
+                    
+                    // Bottom Section - Button
+                    _buildBottomSection(context),
+                  ],
                 ),
-              ],
+              ),
             ),
           ),
         ),
@@ -74,27 +94,47 @@ class AccountSetupScreen extends StatelessWidget {
     );
   }
 
+  Widget _buildHeaderSection(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(
+        top: 40.0,
+        bottom: 20.0,
+      ),
+      child: Center(
+        child: AppHeaderImage(
+          height: 160.0, // Exact size from design specification
+          width: 160.0,
+          imageAsset: AppAsset.authHeader,
+        ),
+      ),
+    );
+  }
+
   /// Builds the heading section of the screen
   Widget _buildHeading(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+    return Row(
       children: [
-        const SizedBox(height: 20),
-        Center(
-          child: Text(
-            context.tr.accountSetupPageTitle,
-            style: Theme.of(context).textTheme.displayLarge,
-          ),
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const SizedBox(height: 20),
+            Center(
+              child: Text(
+                context.tr.accountSetupPageTitle,
+                style: Theme.of(context).textTheme.displayLarge,
+              ),
+            ),
+            const SizedBox(height: 20),
+            Center(
+              child: Text(
+                context.tr.accountSetupPageSubTitle,
+                style: Theme.of(context).textTheme.displayMedium,
+                textAlign: TextAlign.center,
+              ),
+            ),
+            const SizedBox(height: 30),
+          ],
         ),
-        const SizedBox(height: 20),
-        Center(
-          child: Text(
-            context.tr.accountSetupPageSubTitle,
-            style: Theme.of(context).textTheme.displayMedium,
-            textAlign: TextAlign.center,
-          ),
-        ),
-        const SizedBox(height: 30),
       ],
     );
   }
@@ -138,9 +178,7 @@ class AccountSetupScreen extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        SizedBox(
-          height: 20,
-        ),
+        const SizedBox(height: 20),
         Padding(
           padding: const EdgeInsets.only(left: 10),
           child: Text(
@@ -162,26 +200,30 @@ class AccountSetupScreen extends StatelessWidget {
             ),
           ),
         ),
-        SizedBox(
-          height: 40,
-        ),
       ],
     );
   }
 
-  /// Builds the account setup button
-  Widget _buildAccountSetupButton(BuildContext context) {
-    final screenWidth = MediaQuery.of(context).size.width;
-
-    return SizedBox(
-      height: 56,
-      width: screenWidth * 0.9,
-      child: ElevatedButton(
-        onPressed: () => _onAccountSetupPressed(context),
-        style: Theme.of(context).elevatedButtonTheme.style,
-        child: Text(
-          context.tr.accountSetupButtonTitle,
-        ),
+  /// Builds the bottom section with continue button
+  Widget _buildBottomSection(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 20.0),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          // Continue button
+          SizedBox(
+            width: double.infinity,
+            height: 56,
+            child: ElevatedButton(
+              onPressed: () => _onAccountSetupPressed(context),
+              style: Theme.of(context).elevatedButtonTheme.style,
+              child: Text(
+                context.tr.accountSetupButtonTitle,
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

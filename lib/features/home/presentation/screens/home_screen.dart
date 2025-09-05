@@ -1,6 +1,5 @@
 // Flutter imports:
-
-// Flutter imports:
+import 'package:customer_app/constants/app_icons.dart';
 import 'package:flutter/material.dart';
 
 // Package imports:
@@ -13,8 +12,6 @@ import 'package:customer_app/constants/app_route_constants.dart';
 import 'package:customer_app/core/app_extension.dart';
 import 'package:customer_app/core/bottom_navigation/bottom_navigation_cubit.dart';
 
-// Project imports
-
 class HomeScreen extends StatelessWidget {
   final Widget screen;
 
@@ -25,7 +22,8 @@ class HomeScreen extends StatelessWidget {
     final List<AppNamedNavigationBarItem> tabs = _buildTabs(context);
     return Scaffold(
       body: screen,
-      bottomNavigationBar: _buildBottomNavigation(context, tabs),
+      floatingActionButton: _buildFloatingBottomNavigation(context, tabs),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
     );
   }
 
@@ -33,29 +31,77 @@ class HomeScreen extends StatelessWidget {
     return [
       AppNamedNavigationBarItem(
         initialLocation: AppRoutes.home,
-        icon: const Icon(Icons.home),
+        icon: Image.asset(AppIcons.home),
         label: context.tr.bottomNavHubs,
       ),
       AppNamedNavigationBarItem(
         initialLocation: AppRoutes.profile,
-        icon: const Icon(Icons.person),
+        icon: Image.asset(AppIcons.more),
         label: context.tr.bottomNavProfile,
       ),
-
+      AppNamedNavigationBarItem(
+        initialLocation: AppRoutes.profile,
+        icon: Image.asset(AppIcons.shoppingBag),
+        label: context.tr.bottomNavProfile,
+      ),
       // Add more tabs if needed
     ];
   }
 
-  Widget _buildBottomNavigation(
+  Widget _buildFloatingBottomNavigation(
       BuildContext context, List<AppNamedNavigationBarItem> tabs) {
     return BlocBuilder<BottomNavigationCubit, BottomNavigationState>(
       buildWhen: (previous, current) => previous.index != current.index,
       builder: (context, state) {
-        return BottomNavigationBar(
-          currentIndex: state.index,
-          onTap: (index) => _onNavItemTapped(context, state, tabs, index),
-          showSelectedLabels: true,
-          items: tabs,
+        return Container(
+          margin: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
+          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(35),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.1),
+                blurRadius: 10,
+                offset: const Offset(0, 5),
+              ),
+            ],
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: tabs.asMap().entries.map((entry) {
+              final index = entry.key;
+              final tab = entry.value;
+              final isSelected = state.index == index;
+
+              return GestureDetector(
+                onTap: () => _onNavItemTapped(context, state, tabs, index),
+                child: AnimatedContainer(
+                  duration: const Duration(milliseconds: 200),
+                  width: 50,
+                  height: 50,
+                  decoration: BoxDecoration(
+                    color: isSelected
+                        ? const Color.fromRGBO(234, 217, 255, 1)
+                        : Colors.transparent,
+                    shape: BoxShape.circle,
+                  ),
+                  child: Center(
+                    child: IconTheme(
+                      data: IconThemeData(
+                        color: isSelected
+                            ? const Color(0xFF7C3AED)
+                            : Colors.grey[600],
+                        size: 24,
+                      ),
+                      child: tab.icon,
+                    ),
+                  ),
+                ),
+              );
+            }).toList(),
+          ),
         );
       },
     );

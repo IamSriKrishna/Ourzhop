@@ -20,7 +20,8 @@ class LocationSelectionScreen extends StatefulWidget {
   const LocationSelectionScreen({super.key});
 
   @override
-  State<LocationSelectionScreen> createState() => _LocationSelectionScreenState();
+  State<LocationSelectionScreen> createState() =>
+      _LocationSelectionScreenState();
 }
 
 class _LocationSelectionScreenState extends State<LocationSelectionScreen> {
@@ -39,95 +40,71 @@ class _LocationSelectionScreenState extends State<LocationSelectionScreen> {
   Widget build(BuildContext context) {
     final appColors = context.appColors;
 
-    return Stack(
-      children: [
-        Scaffold(
-          body: Container(
-            decoration: BoxDecoration(
-              gradient: appColors.backgroundGradient,
-            ),
-            child: SafeArea(
-              child: Column(
-                children: [
-                  // App Bar
-                  _buildAppBar(context),
-                  
-                  // Content
-                  Expanded(
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const SizedBox(height: 20.0),
+    return PopScope(
+      canPop: false, // Prevent default back navigation
+      onPopInvoked: (didPop) async {
+        if (!didPop) {
+          await _handleBackNavigation(context);
+        }
+      },
+      child: Stack(
+        children: [
+          Scaffold(
+            body: Container(
+              decoration: BoxDecoration(
+                gradient: appColors.backgroundGradient,
+              ),
+              child: SafeArea(
+                child: Column(
+                  children: [
+                    // Content
+                    Expanded(
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const SizedBox(height: 20.0),
 
-                          // Subtitle Section
-                          _buildSubtitleSection(context),
+                            // Subtitle Section
+                            _buildSubtitleSection(context),
 
-                          const SizedBox(height: 24.0),
+                            const SizedBox(height: 24.0),
 
-                          // Search Input Section
-                          _buildSearchInputSection(context),
+                            // Search Input Section
+                            _buildSearchInputSection(context),
 
-                          const SizedBox(height: 16.0),
+                            const SizedBox(height: 16.0),
 
-                          // Current Location Option
-                          _buildCurrentLocationSection(context),
+                            // Current Location Option
+                            _buildCurrentLocationSection(context),
 
-                          // Error Display
-                          if (_errorMessage != null) _buildErrorSection(context),
+                            // Error Display
+                            if (_errorMessage != null)
+                              _buildErrorSection(context),
 
-                          // Spacer to push button to bottom
-                          const Spacer(),
+                            // Spacer to push button to bottom
+                            const Spacer(),
 
-                          // Continue Button
-                          _buildContinueButton(context),
+                            // Continue Button
+                            _buildContinueButton(context),
 
-                          const SizedBox(height: 24.0),
-                        ],
+                            const SizedBox(height: 24.0),
+                          ],
+                        ),
                       ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
           ),
-        ),
-        // Loading overlay
-        if (_isLoadingLocation)
-          ProgressDialog(
-            title: "Getting your location...",
-            isProgressed: true,
-          ),
-      ],
-    );
-  }
-
-  /// Builds the app bar
-  Widget _buildAppBar(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
-      child: Row(
-        children: [
-          GestureDetector(
-            onTap: () => _navigateBack(context),
-            child: Container(
-              padding: const EdgeInsets.all(8.0),
-              child: const Icon(
-                Icons.arrow_back_ios,
-                color: Colors.black,
-                size: 20,
-              ),
+          // Loading overlay
+          if (_isLoadingLocation)
+            ProgressDialog(
+              title: "Getting your location...",
+              isProgressed: true,
             ),
-          ),
-          const SizedBox(width: 8.0),
-          Text(
-            "Select location",
-            style: AppTypography.getAppBarTitle(context).copyWith(
-              fontSize: 18,
-              fontWeight: FontWeight.w600,
-            ),
-          ),
         ],
       ),
     );
@@ -135,12 +112,30 @@ class _LocationSelectionScreenState extends State<LocationSelectionScreen> {
 
   /// Builds the subtitle section
   Widget _buildSubtitleSection(BuildContext context) {
-    return Text(
-      "Use current location or search your own location",
-      style: AppTypography.getBodyText(context).copyWith(
-        color: Colors.grey[600],
-        fontSize: 14,
-      ),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        SizedBox(
+          height: 15,
+        ),
+        Text(
+          "Select location",
+          style: AppTypography.getAppBarTitle(context).copyWith(
+            fontSize: 20,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+        SizedBox(
+          height: 5,
+        ),
+        Text(
+          "Use current location or search your own\nlocation",
+          style: AppTypography.getBodyText(context).copyWith(
+            color: Colors.grey[600],
+            fontSize: 16,
+          ),
+        ),
+      ],
     );
   }
 
@@ -193,7 +188,7 @@ class _LocationSelectionScreenState extends State<LocationSelectionScreen> {
           color: Colors.white,
           borderRadius: BorderRadius.circular(12.0),
           border: Border.all(
-            color: _currentLocation != null 
+            color: _currentLocation != null
                 ? appColors.primary.withOpacity(0.3)
                 : Colors.grey[200]!,
           ),
@@ -235,7 +230,7 @@ class _LocationSelectionScreenState extends State<LocationSelectionScreen> {
                   ),
                   const SizedBox(height: 4.0),
                   Text(
-                    _currentLocation != null 
+                    _currentLocation != null
                         ? "Location detected"
                         : "Need to give location permission",
                     style: AppTypography.getBodyText(context).copyWith(
@@ -293,14 +288,15 @@ class _LocationSelectionScreenState extends State<LocationSelectionScreen> {
   /// Builds the continue button
   Widget _buildContinueButton(BuildContext context) {
     final appColors = context.appColors;
-    final canContinue = _currentLocation != null || _searchController.text.isNotEmpty;
+    final canContinue =
+        _currentLocation != null || _searchController.text.isNotEmpty;
 
     return Container(
       width: double.infinity,
       height: 58.0,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(30.0),
-        gradient: canContinue 
+        gradient: canContinue
             ? LinearGradient(
                 colors: [
                   appColors.primary,
@@ -336,83 +332,133 @@ class _LocationSelectionScreenState extends State<LocationSelectionScreen> {
 
   /// Gets the current location
   Future<void> _getCurrentLocation() async {
-    setState(() {
-      _isLoadingLocation = true;
-      _errorMessage = null;
-    });
+  setState(() {
+    _isLoadingLocation = true;
+    _errorMessage = null;
+  });
 
-    try {
-      // Check and request permission
-      final permission = await _checkAndRequestLocationPermission();
-      if (!permission) {
-        setState(() {
-          _errorMessage = "Location permission is required to get your current location";
-          _isLoadingLocation = false;
-        });
-        return;
-      }
-
-      // Check if location services are enabled
-      bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
-      if (!serviceEnabled) {
-        setState(() {
-          _errorMessage = "Location services are disabled. Please enable them in settings.";
-          _isLoadingLocation = false;
-        });
-        return;
-      }
-
-      // Get current position
-      Position position = await Geolocator.getCurrentPosition(
-        desiredAccuracy: LocationAccuracy.high,
-        timeLimit: const Duration(seconds: 10),
-      );
-
-      // Get address from coordinates
-      List<Placemark> placemarks = await placemarkFromCoordinates(
-        position.latitude,
-        position.longitude,
-      );
-
-      if (placemarks.isNotEmpty) {
-        final placemark = placemarks.first;
-        final cityName = placemark.locality ?? placemark.subAdministrativeArea ?? 'Unknown Location';
-        
-        setState(() {
-          _currentLocation = cityName;
-          _isLoadingLocation = false;
-        });
-      } else {
-        setState(() {
-          _errorMessage = "Could not determine your location. Please try again.";
-          _isLoadingLocation = false;
-        });
-      }
-    } catch (e) {
+  try {
+    // Check and request permission
+    final permission = await _checkAndRequestLocationPermission();
+    if (!permission) {
       setState(() {
-        _errorMessage = "Failed to get your location. Please check your internet connection and try again.";
+        _errorMessage =
+            "Location permission is required to get your current location";
         _isLoadingLocation = false;
       });
-      print('Location error: $e');
+      return;
     }
+
+    // Check if location services are enabled
+    bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!serviceEnabled) {
+      setState(() {
+        _errorMessage =
+            "Location services are disabled. Please enable them in settings.";
+        _isLoadingLocation = false;
+      });
+      return;
+    }
+
+    // Get current position
+    Position position = await Geolocator.getCurrentPosition(
+      desiredAccuracy: LocationAccuracy.high,
+      timeLimit: const Duration(seconds: 10),
+    );
+
+    List<Placemark> placemarks = await placemarkFromCoordinates(
+      position.latitude,
+      position.longitude,
+    );
+
+    if (placemarks.isNotEmpty) {
+      final placemark = placemarks.first;
+      
+      String? areaName = placemark.subLocality ?? 
+                        placemark.thoroughfare ?? 
+                        placemark.name;
+      
+      String? cityName = placemark.locality ?? 
+                        placemark.subAdministrativeArea;
+      
+      String? countryName = placemark.country;
+      
+      List<String> locationParts = [];
+      
+      if (areaName != null && areaName.isNotEmpty) {
+        locationParts.add(areaName.toLowerCase());
+      }
+      
+      if (cityName != null && cityName.isNotEmpty) {
+        locationParts.add(cityName.toLowerCase());
+      }
+      
+      if (countryName != null && countryName.isNotEmpty) {
+        locationParts.add(countryName.toLowerCase());
+      }
+      
+      if (locationParts.isNotEmpty) {
+        String formattedLocation = locationParts.join(',');
+        
+        setState(() {
+          _currentLocation = formattedLocation;
+          _isLoadingLocation = false;
+        });
+        
+        print('Placemark details:');
+        print('Name: ${placemark.name}');
+        print('Street: ${placemark.street}');
+        print('Thoroughfare: ${placemark.thoroughfare}');
+        print('SubThoroughfare: ${placemark.subThoroughfare}');
+        print('Locality: ${placemark.locality}');
+        print('SubLocality: ${placemark.subLocality}');
+        print('AdministrativeArea: ${placemark.administrativeArea}');
+        print('SubAdministrativeArea: ${placemark.subAdministrativeArea}');
+        print('PostalCode: ${placemark.postalCode}');
+        print('Country: ${placemark.country}');
+        print('IsoCountryCode: ${placemark.isoCountryCode}');
+        print('Formatted Location: $formattedLocation');
+        
+      } else {
+        setState(() {
+          _errorMessage =
+              "Could not determine your location details. Please try again.";
+          _isLoadingLocation = false;
+        });
+      }
+    } else {
+      setState(() {
+        _errorMessage =
+            "Could not determine your location. Please try again.";
+        _isLoadingLocation = false;
+      });
+    }
+  } catch (e) {
+    setState(() {
+      _errorMessage =
+          "Failed to get your location. Please check your internet connection and try again.";
+      _isLoadingLocation = false;
+    });
+    print('Location error: $e');
   }
+}
 
   /// Checks and requests location permission
   Future<bool> _checkAndRequestLocationPermission() async {
     // Check current permission status
     PermissionStatus permission = await Permission.location.status;
-    
+
     if (permission.isDenied) {
       // Request permission
       permission = await Permission.location.request();
     }
-    
+
     if (permission.isPermanentlyDenied) {
       // Show dialog to open settings
       _showPermissionDialog();
       return false;
     }
-    
+
     return permission.isGranted;
   }
 
@@ -445,7 +491,7 @@ class _LocationSelectionScreenState extends State<LocationSelectionScreen> {
   /// Handles continue button press
   void _onContinuePressed(BuildContext context) {
     final selectedLocation = _currentLocation ?? _searchController.text.trim();
-    
+
     if (selectedLocation.isEmpty) {
       setState(() {
         _errorMessage = "Please select a location to continue";
@@ -457,31 +503,74 @@ class _LocationSelectionScreenState extends State<LocationSelectionScreen> {
     _navigateToNextScreen(context, selectedLocation);
   }
 
- /// Navigates to the next screen
-void _navigateToNextScreen(BuildContext context, String location) {
-  try {
-    AuthPreferenceService().saveUserLocation(location);
-    
-    context.pushReplacement(AppRoutes.home);
-    
-  } catch (e) {
-    print('Navigation error: $e');
-    AppErrorDisplay.showDialog(
-      context,
-      'Navigation failed. Please try again.',
-      title: 'Error',
-      buttonLabel: 'OK',
-      onPressed: () {},
-    );
-  }
-}
-
-  /// Navigates back
-  void _navigateBack(BuildContext context) {
+  /// Navigates to the next screen
+  void _navigateToNextScreen(BuildContext context, String location) {
     try {
-      context.pop();
+      AuthPreferenceService().saveUserLocation(location);
+
+      context.pushReplacement(AppRoutes.home);
     } catch (e) {
-      Navigator.of(context).pop();
+      print('Navigation error: $e');
+      AppErrorDisplay.showDialog(
+        context,
+        'Navigation failed. Please try again.',
+        title: 'Error',
+        buttonLabel: 'OK',
+        onPressed: () {},
+      );
     }
+  }
+
+  /// Handles back navigation - logs out user and redirects to login
+  Future<void> _handleBackNavigation(BuildContext context) async {
+    try {
+      // Show confirmation dialog
+      final shouldLogout = true;
+      
+      if (shouldLogout) {
+        // Clear user session/logout
+        await AuthPreferenceService().logout();
+        
+        // Navigate to login screen
+        if (context.mounted) {
+          context.pushReplacement(AppRoutes.login);
+        }
+      }
+    } catch (e) {
+      print('Back navigation error: $e');
+      // Fallback navigation
+      if (context.mounted) {
+        context.pushReplacement(AppRoutes.login);
+      }
+    }
+  }
+
+  /// Shows logout confirmation dialog
+  Future<bool> _showLogoutConfirmationDialog(BuildContext context) async {
+    return await showDialog<bool>(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Logout'),
+          content: const Text(
+            'Going back will log you out. Are you sure you want to continue?',
+          ),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(false),
+              child: const Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(true),
+              child: const Text(
+                'Logout',
+                style: TextStyle(color: Colors.red),
+              ),
+            ),
+          ],
+        );
+      },
+    ) ?? false;
   }
 }
