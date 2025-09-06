@@ -1,10 +1,11 @@
+import 'package:customer_app/core/app_extension.dart';
 import 'package:customer_app/features/home/widgets/home_content_subwidget.dart';
 import 'package:flutter/material.dart';
 
 class HomeContentWidgets {
   HomeContentWidgets._();
 
-  static Widget searchAndLocation() {
+  static Widget searchAndLocation(String location) {
     return SliverToBoxAdapter(
       child: Container(
         color: const Color(0xFF8B5CF6),
@@ -57,8 +58,8 @@ class HomeContentWidgets {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const Text(
-                      'Chennai, India',
+                     Text(
+                      location.toCapital,
                       style: TextStyle(
                         color: Colors.white,
                         fontSize: 18,
