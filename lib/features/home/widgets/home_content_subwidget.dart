@@ -10,7 +10,10 @@ class HomeContentSubwidget {
   HomeContentSubwidget._();
 
   static Widget buildStickyCategory(
-      String label, IconData icon, bool isSelected) {
+      String label, IconData icon, bool isSelected, BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
@@ -18,13 +21,13 @@ class HomeContentSubwidget {
           width: 50,
           height: 50,
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: colorScheme.surface,
             border: Border.all(
-                color: isSelected ? const Color(0xFF8B5CF6) : Colors.white),
+                color: isSelected ? colorScheme.primary : colorScheme.surface),
             shape: BoxShape.circle,
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.1),
+                color: colorScheme.shadow.withOpacity(0.1),
                 blurRadius: 8,
                 offset: const Offset(0, 2),
               ),
@@ -32,7 +35,7 @@ class HomeContentSubwidget {
           ),
           child: Icon(
             icon,
-            color: const Color(0xFF8B5CF6),
+            color: colorScheme.primary,
             size: 24,
           ),
         ),
@@ -41,7 +44,7 @@ class HomeContentSubwidget {
           label,
           style: TextStyle(
             fontSize: 12,
-            color: isSelected ? const Color(0xFF8B5CF6) : Colors.black,
+            color: isSelected ? colorScheme.primary : colorScheme.onSurface,
             fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
           ),
         ),
@@ -49,15 +52,18 @@ class HomeContentSubwidget {
     );
   }
 
-  static Widget buildStoreCard() {
+  static Widget buildStoreCard(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    
     return Container(
       margin: const EdgeInsets.only(left: 20, right: 20, bottom: 20),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: colorScheme.surface,
         borderRadius: BorderRadius.circular(15),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: colorScheme.shadow.withOpacity(0.05),
             blurRadius: 10,
             offset: const Offset(0, 2),
           ),
@@ -73,7 +79,7 @@ class HomeContentSubwidget {
                 topLeft: Radius.circular(15),
                 topRight: Radius.circular(15),
               ),
-              image: DecorationImage(
+              image: const DecorationImage(
                 image: NetworkImage(
                     'https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=400&h=200&fit=crop'),
                 fit: BoxFit.cover,
@@ -88,11 +94,12 @@ class HomeContentSubwidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    const Text(
+                    Text(
                       'Store name',
                       style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
+                        color: colorScheme.onSurface,
                       ),
                     ),
                     Container(
@@ -121,10 +128,10 @@ class HomeContentSubwidget {
                   ],
                 ),
                 const SizedBox(height: 5),
-                const Text(
+                Text(
                   'Grocery',
                   style: TextStyle(
-                    color: Colors.grey,
+                    color: colorScheme.onSurfaceVariant,
                     fontSize: 14,
                   ),
                 ),
@@ -132,18 +139,18 @@ class HomeContentSubwidget {
                 Row(
                   children: [
                     Icon(Icons.delivery_dining,
-                        color: Colors.grey[600], size: 16),
+                        color: colorScheme.onSurfaceVariant, size: 16),
                     const SizedBox(width: 5),
-                    const Text(
+                    Text(
                       'Free delivery',
-                      style: TextStyle(color: Colors.grey, fontSize: 12),
+                      style: TextStyle(color: colorScheme.onSurfaceVariant, fontSize: 12),
                     ),
                     const SizedBox(width: 15),
-                    Icon(Icons.access_time, color: Colors.grey[600], size: 16),
+                    Icon(Icons.access_time, color: colorScheme.onSurfaceVariant, size: 16),
                     const SizedBox(width: 5),
-                    const Text(
+                    Text(
                       '10-15 mins • 5 Kms',
-                      style: TextStyle(color: Colors.grey, fontSize: 12),
+                      style: TextStyle(color: colorScheme.onSurfaceVariant, fontSize: 12),
                     ),
                   ],
                 ),
@@ -163,7 +170,10 @@ class HomeContentSubwidget {
     'https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=800&h=400&fit=crop',
   ];
 
-  static Widget homeCarousel() {
+  static Widget homeCarousel(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    
     return BlocProvider(
       create: (context) => CarouselCubit(),
       child: Column(
@@ -174,8 +184,8 @@ class HomeContentSubwidget {
                 options: CarouselOptions(
                   height: 180,
                   autoPlay: true,
-                  autoPlayInterval: Duration(seconds: 3),
-                  autoPlayAnimationDuration: Duration(milliseconds: 800),
+                  autoPlayInterval: const Duration(seconds: 3),
+                  autoPlayAnimationDuration: const Duration(milliseconds: 800),
                   autoPlayCurve: Curves.fastOutSlowIn,
                   enlargeCenterPage: true,
                   viewportFraction: 0.9,
@@ -212,8 +222,8 @@ class HomeContentSubwidget {
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(4.0),
                       color: currentIndex == entry.key
-                          ? const Color(0xFF8B5CF6)
-                          : Colors.grey.withOpacity(0.4),
+                          ? colorScheme.primary
+                          : colorScheme.onSurfaceVariant.withOpacity(0.4),
                     ),
                   );
                 }).toList(),
@@ -226,7 +236,10 @@ class HomeContentSubwidget {
     );
   }
 
-  static Widget tabContent() {
+  static Widget tabContent(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    
     return BlocProvider(
       create: (context) => TabCubit(),
       child: BlocBuilder<TabCubit, TabType>(
@@ -242,8 +255,8 @@ class HomeContentSubwidget {
                       height: 50,
                       decoration: BoxDecoration(
                         color: selectedTab == TabType.delivery
-                            ? const Color(0xFF8B5CF6)
-                            : Colors.grey[200],
+                            ? colorScheme.primary
+                            : colorScheme.surfaceContainerHighest,
                         borderRadius: BorderRadius.circular(25),
                       ),
                       child: Center(
@@ -253,16 +266,16 @@ class HomeContentSubwidget {
                             Icon(
                               Icons.delivery_dining,
                               color: selectedTab == TabType.delivery
-                                  ? Colors.white
-                                  : Colors.grey,
+                                  ? colorScheme.onPrimary
+                                  : colorScheme.onSurfaceVariant,
                             ),
                             const SizedBox(width: 8),
                             Text(
                               'Delivery',
                               style: TextStyle(
                                 color: selectedTab == TabType.delivery
-                                    ? Colors.white
-                                    : Colors.grey,
+                                    ? colorScheme.onPrimary
+                                    : colorScheme.onSurfaceVariant,
                                 fontWeight: FontWeight.w600,
                               ),
                             ),
@@ -280,8 +293,8 @@ class HomeContentSubwidget {
                       height: 50,
                       decoration: BoxDecoration(
                         color: selectedTab == TabType.pickup
-                            ? const Color(0xFF8B5CF6)
-                            : Colors.grey[200],
+                            ? colorScheme.primary
+                            : colorScheme.surfaceContainerHighest,
                         borderRadius: BorderRadius.circular(25),
                       ),
                       child: Center(
@@ -291,16 +304,16 @@ class HomeContentSubwidget {
                             Icon(
                               Icons.store,
                               color: selectedTab == TabType.pickup
-                                  ? Colors.white
-                                  : Colors.grey,
+                                  ? colorScheme.onPrimary
+                                  : colorScheme.onSurfaceVariant,
                             ),
                             const SizedBox(width: 8),
                             Text(
                               'Pickup',
                               style: TextStyle(
                                 color: selectedTab == TabType.pickup
-                                    ? Colors.white
-                                    : Colors.grey,
+                                    ? colorScheme.onPrimary
+                                    : colorScheme.onSurfaceVariant,
                                 fontWeight: FontWeight.w600,
                               ),
                             ),
@@ -318,7 +331,10 @@ class HomeContentSubwidget {
     );
   }
 
-  static Widget recommendedWidgets() {
+  static Widget recommendedWidgets(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    
     return SizedBox(
       height: 300,
       width: double.infinity,
@@ -335,17 +351,17 @@ class HomeContentSubwidget {
                 borderRadius: BorderRadius.circular(10),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.grey.withOpacity(0.2),
+                    color: colorScheme.shadow.withOpacity(0.2),
                     spreadRadius: 1,
                     blurRadius: 5,
-                    offset: Offset(0, 2),
+                    offset: const Offset(0, 2),
                   ),
                 ],
               ),
               child: Column(
                 children: [
                   ClipRRect(
-                    borderRadius: BorderRadius.only(
+                    borderRadius: const BorderRadius.only(
                         topLeft: Radius.circular(10),
                         topRight: Radius.circular(10)),
                     child: Image.network(
@@ -358,12 +374,12 @@ class HomeContentSubwidget {
                   Expanded(
                     child: Container(
                       decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.only(
+                        color: colorScheme.surface,
+                        borderRadius: const BorderRadius.only(
                             bottomLeft: Radius.circular(10),
                             bottomRight: Radius.circular(10)),
                       ),
-                      padding: EdgeInsets.all(12),
+                      padding: const EdgeInsets.all(12),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -375,18 +391,18 @@ class HomeContentSubwidget {
                                   style: TextStyle(
                                     fontSize: 16,
                                     fontWeight: FontWeight.bold,
-                                    color: Colors.black87,
+                                    color: colorScheme.onSurface,
                                   ),
                                 ),
                               ),
                               Container(
-                                padding: EdgeInsets.symmetric(
+                                padding: const EdgeInsets.symmetric(
                                     horizontal: 8, vertical: 4),
                                 decoration: BoxDecoration(
                                   color: Colors.green,
                                   borderRadius: BorderRadius.circular(12),
                                 ),
-                                child: Row(
+                                child: const Row(
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
                                     Text(
@@ -408,66 +424,66 @@ class HomeContentSubwidget {
                               ),
                             ],
                           ),
-                          SizedBox(height: 4),
+                          const SizedBox(height: 4),
                           Text(
                             "Grocery • Bakery • Fresh",
                             style: TextStyle(
                               fontSize: 12,
-                              color: Colors.grey[600],
+                              color: colorScheme.onSurfaceVariant,
                             ),
                           ),
-                          SizedBox(height: 8),
+                          const SizedBox(height: 8),
                           Row(
                             children: [
                               Row(
                                 children: [
                                   Container(
-                                    padding: EdgeInsets.all(4),
+                                    padding: const EdgeInsets.all(4),
                                     decoration: BoxDecoration(
-                                      color: Colors.grey[100],
+                                      color: colorScheme.surfaceContainerHighest.withOpacity(0.5),
                                       borderRadius: BorderRadius.circular(4),
                                     ),
                                     child: Image.asset(
                                       AppIcons.shoppingBag,
-                                      color: const Color(0xFF8B5CF6),
+                                      color: colorScheme.primary,
                                     ),
                                   ),
-                                  SizedBox(width: 4),
+                                  const SizedBox(width: 4),
                                   Text(
                                     "Free delivery",
                                     style: TextStyle(
                                       fontSize: 11,
-                                      color: Colors.grey[700],
+                                      color: colorScheme.onSurfaceVariant,
                                     ),
                                   ),
                                 ],
                               ),
-                              SizedBox(width: 8),
+                              const SizedBox(width: 8),
                               Container(
-                                padding: EdgeInsets.all(4),
+                                padding: const EdgeInsets.all(4),
                                 decoration: BoxDecoration(
-                                  color: Colors.grey[100],
+                                  color: colorScheme.surfaceContainerHighest.withOpacity(0.5),
                                   borderRadius: BorderRadius.circular(4),
                                 ),
                                 child: Image.asset(
                                   AppIcons.timing,
-                                  color: const Color(0xFF8B5CF6),
+                                  color: colorScheme.primary,
                                 ),
                               ),
-                              SizedBox(width: 4),
+                              const SizedBox(width: 4),
                               Text(
                                 "30 mins",
                                 style: TextStyle(
                                   fontSize: 11,
-                                  color: Colors.grey[700],
+                                  color: colorScheme.onSurfaceVariant,
                                 ),
                               ),
-                              SizedBox(width: 8),
+                              const SizedBox(width: 8),
                               Text(
                                 "• 5 kms",
                                 style: TextStyle(
                                   fontSize: 11,
-                                  color: Colors.grey[700],
+                                  color: colorScheme.onSurfaceVariant,
                                 ),
                               ),
                             ],

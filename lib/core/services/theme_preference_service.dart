@@ -19,7 +19,7 @@ class ThemePreferenceService {
   }
 
   Future<AppTheme> getSelectedTheme() async {
-    var box = await Hive.openBox("s");//use _boxName
+    var box = await Hive.openBox(_boxName);//use _boxName
     final String? themeStr = box.get(_key); // No defaultValue here
 
     if (themeStr == null) {

@@ -1,4 +1,3 @@
-import 'package:customer_app/constants/app_icons.dart';
 import 'package:customer_app/constants/app_images.dart';
 import 'package:customer_app/core/services/auth_preference_service.dart';
 import 'package:customer_app/features/auth/data/models/user_model.dart';
@@ -18,35 +17,49 @@ class _HomeContentState extends State<HomeContent> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    
     return FutureBuilder<UserModel?>(
       future: _authPrefs.getUser(),
-      builder:  (ctx, snap) {
+      builder: (ctx, snap) {
         if (snap.connectionState == ConnectionState.waiting) {
-          return const Scaffold(
-            body: Center(child: CircularProgressIndicator()),
+          return Scaffold(
+            backgroundColor: colorScheme.surface,
+            body: Center(
+              child: CircularProgressIndicator(
+                color: colorScheme.primary,
+              ),
+            ),
           );
         }
         if (snap.hasError) {
           return Scaffold(
-            body: Center(child: Text('Error: ${snap.error}')),
+            backgroundColor: colorScheme.surface,
+            body: Center(
+              child: Text(
+                'Error: ${snap.error}',
+                style: TextStyle(color: colorScheme.error),
+              ),
+            ),
           );
         }
         final user = snap.data!;
 
         return Scaffold(
-          backgroundColor: Colors.grey.withOpacity(0.05),
+          backgroundColor: colorScheme.surfaceContainerHighest.withOpacity(0.3),
           body: CustomScrollView(
             slivers: [
-              HomeContentWidgets.searchAndLocation(user.location!),
-              HomeContentWidgets.appBar(),
-              HomeContentWidgets.content(),
+              HomeContentWidgets.searchAndLocation(user.location!, context),
+              HomeContentWidgets.appBar(context),
+              HomeContentWidgets.content(context),
               SliverToBoxAdapter(
                 child: Image.asset(AppImages.homeWallpaper),
               )
             ],
           ),
         );
-      }
+      },
     );
   }
 }

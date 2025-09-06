@@ -5,10 +5,13 @@ import 'package:flutter/material.dart';
 class HomeContentWidgets {
   HomeContentWidgets._();
 
-  static Widget searchAndLocation(String location) {
+  static Widget searchAndLocation(String location, BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    
     return SliverToBoxAdapter(
       child: Container(
-        color: const Color(0xFF8B5CF6),
+        color: colorScheme.primary,
         padding: const EdgeInsets.fromLTRB(20, 50, 20, 10),
         child: Column(
           children: [
@@ -19,15 +22,16 @@ class HomeContentWidgets {
                   child: Container(
                     height: 50,
                     decoration: BoxDecoration(
-                      color: Colors.white,
+                      color: colorScheme.surface,
                       borderRadius: BorderRadius.circular(25),
                     ),
-                    child: const TextField(
+                    child: TextField(
                       decoration: InputDecoration(
                         hintText: 'Search for "store name"',
-                        prefixIcon: Icon(Icons.search, color: Colors.grey),
+                        prefixIcon: Icon(Icons.search, color: colorScheme.onSurfaceVariant),
                         border: InputBorder.none,
-                        contentPadding: EdgeInsets.symmetric(vertical: 15),
+                        contentPadding: const EdgeInsets.symmetric(vertical: 15),
+                        hintStyle: TextStyle(color: colorScheme.onSurfaceVariant),
                       ),
                     ),
                   ),
@@ -36,21 +40,21 @@ class HomeContentWidgets {
                 Container(
                   height: 50,
                   width: 50,
-                  decoration: const BoxDecoration(
-                    color: Colors.white,
+                  decoration: BoxDecoration(
+                    color: colorScheme.surface,
                     shape: BoxShape.circle,
                   ),
-                  child: const Icon(Icons.person, color: Colors.grey),
+                  child: Icon(Icons.person, color: colorScheme.onSurfaceVariant),
                 ),
               ],
             ),
             const SizedBox(height: 20),
             Column(
               children: [
-                const Text(
+                Text(
                   'Current Location',
                   style: TextStyle(
-                    color: Colors.white70,
+                    color: colorScheme.onPrimary.withOpacity(0.7),
                     fontSize: 14,
                   ),
                 ),
@@ -58,10 +62,10 @@ class HomeContentWidgets {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                     Text(
+                    Text(
                       location.toCapital,
                       style: TextStyle(
-                        color: Colors.white,
+                        color: colorScheme.onPrimary,
                         fontSize: 18,
                         fontWeight: FontWeight.w600,
                       ),
@@ -69,9 +73,9 @@ class HomeContentWidgets {
                     const SizedBox(width: 5),
                     Transform.rotate(
                       angle: 1.5708,
-                      child: const Icon(
+                      child: Icon(
                         Icons.arrow_forward_ios,
-                        color: Colors.white,
+                        color: colorScheme.onPrimary,
                         size: 14,
                       ),
                     ),
@@ -85,11 +89,14 @@ class HomeContentWidgets {
     );
   }
 
-  static Widget appBar() {
+  static Widget appBar(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    
     return SliverAppBar(
       pinned: true,
       floating: false,
-      backgroundColor: Colors.white,
+      backgroundColor: colorScheme.surface,
       elevation: 0,
       toolbarHeight: 100,
       automaticallyImplyLeading: false,
@@ -98,12 +105,12 @@ class HomeContentWidgets {
           gradient: LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
-            stops: [0.0, 0.5, 0.5, 1.0],
+            stops: const [0.0, 0.5, 0.5, 1.0],
             colors: [
-              Color(0xFF8B5CF6),
-              Color(0xFF8B5CF6),
-              Colors.white,
-              Colors.white,
+              colorScheme.primary,
+              colorScheme.primary,
+              colorScheme.surface,
+              colorScheme.surface,
             ],
           ),
         ),
@@ -117,15 +124,15 @@ class HomeContentWidgets {
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   HomeContentSubwidget.buildStickyCategory(
-                      'All', Icons.apps, false),
+                      'All', Icons.apps, false, context),
                   HomeContentSubwidget.buildStickyCategory(
-                      'Grocery', Icons.shopping_cart, true),
+                      'Grocery', Icons.shopping_cart, true, context),
                   HomeContentSubwidget.buildStickyCategory(
-                      'Electronics', Icons.headphones, false),
+                      'Electronics', Icons.headphones, false, context),
                   HomeContentSubwidget.buildStickyCategory(
-                      'Bakery', Icons.cake, false),
+                      'Bakery', Icons.cake, false, context),
                   HomeContentSubwidget.buildStickyCategory(
-                      'Medicine', Icons.medical_services, false),
+                      'Medicine', Icons.medical_services, false, context),
                 ],
               ),
             ),
@@ -135,30 +142,35 @@ class HomeContentWidgets {
     );
   }
 
-  static Widget content() {
+  static Widget content(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    
     return SliverToBoxAdapter(
       child: Container(
-        color: Colors.grey.withOpacity(0.05),
+        color: colorScheme.surfaceContainerHighest.withOpacity(0.3),
         child: Column(
           children: [
-            HomeContentSubwidget.homeCarousel(),
-            HomeContentSubwidget.tabContent(),
+            const SizedBox(height: 30),
+            HomeContentSubwidget.homeCarousel(context),
+            HomeContentSubwidget.tabContent(context),
             const SizedBox(height: 30),
             Container(
               alignment: Alignment.centerLeft,
               margin: const EdgeInsets.symmetric(horizontal: 20),
-              child: const Text(
+              child: Text(
                 'Recommended',
                 style: TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
+                  color: colorScheme.onSurface,
                 ),
               ),
             ),
-            HomeContentSubwidget.recommendedWidgets(),
+            HomeContentSubwidget.recommendedWidgets(context),
             const SizedBox(height: 20),
             ...List.generate(
-                5, (index) => HomeContentSubwidget.buildStoreCard()),
+                5, (index) => HomeContentSubwidget.buildStoreCard(context)),
           ],
         ),
       ),
