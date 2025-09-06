@@ -19,13 +19,13 @@ class ThemePreferenceService {
   }
 
   Future<AppTheme> getSelectedTheme() async {
-    var box = await Hive.openBox("");//use _boxName
+    var box = await Hive.openBox("s");//use _boxName
     final String? themeStr = box.get(_key); // No defaultValue here
 
     if (themeStr == null) {
       // Detect the device brightness if no theme is stored yet
       final brightness = PlatformDispatcher.instance.platformBrightness;
-      final deviceTheme = brightness == Brightness.light
+      final deviceTheme = brightness == Brightness.dark
           ? AppTheme.darkTheme
           : AppTheme.lightTheme;
 
