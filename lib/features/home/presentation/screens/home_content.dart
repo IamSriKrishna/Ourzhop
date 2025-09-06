@@ -34,6 +34,7 @@ class _HomeContentState extends State<HomeContent> {
         final user = snap.data!;
 
         return Scaffold(
+          backgroundColor: Colors.grey.withOpacity(0.05),
           body: CustomScrollView(
             slivers: [
               HomeContentWidgets.searchAndLocation(user.location!),
