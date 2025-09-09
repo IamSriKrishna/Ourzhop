@@ -4,11 +4,10 @@ import 'package:flutter/material.dart';
 
 class HomeContentWidgets {
   HomeContentWidgets._();
-
   static Widget searchAndLocation(String location, BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
-    
+
     return SliverToBoxAdapter(
       child: Container(
         color: colorScheme.primary,
@@ -22,16 +21,49 @@ class HomeContentWidgets {
                   child: Container(
                     height: 50,
                     decoration: BoxDecoration(
-                      color: colorScheme.surface,
+                      color: Colors.white,
                       borderRadius: BorderRadius.circular(25),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.1),
+                          blurRadius: 4,
+                          offset: const Offset(0, 2),
+                        ),
+                      ],
                     ),
                     child: TextField(
                       decoration: InputDecoration(
                         hintText: 'Search for "store name"',
-                        prefixIcon: Icon(Icons.search, color: colorScheme.onSurfaceVariant),
+                        prefixIcon: Container(
+                          padding: const EdgeInsets.all(12),
+                          child: const Icon(
+                            Icons.search,
+                            color: Colors.black54,
+                            size: 20,
+                          ),
+                        ),
                         border: InputBorder.none,
-                        contentPadding: const EdgeInsets.symmetric(vertical: 15),
-                        hintStyle: TextStyle(color: colorScheme.onSurfaceVariant),
+                        enabledBorder: OutlineInputBorder(
+                          borderSide: BorderSide(color: Colors.white),
+                            borderRadius: BorderRadius.circular(20)),
+                        focusedBorder: OutlineInputBorder(
+                          borderSide: BorderSide(color: Colors.white),
+                            borderRadius: BorderRadius.circular(20)),
+                        filled: true,
+                        fillColor: Colors.white,
+                        contentPadding: const EdgeInsets.symmetric(
+                          vertical: 15,
+                          horizontal: 0,
+                        ),
+                        hintStyle: TextStyle(
+                          color: Colors.black,
+                          fontSize: 16,
+                          fontWeight: FontWeight.w400,
+                        ),
+                      ),
+                      style: const TextStyle(
+                        fontSize: 16,
+                        color: Colors.black87,
                       ),
                     ),
                   ),
@@ -41,10 +73,20 @@ class HomeContentWidgets {
                   height: 50,
                   width: 50,
                   decoration: BoxDecoration(
-                    color: colorScheme.surface,
+                    color: Colors.white,
                     shape: BoxShape.circle,
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.1),
+                        blurRadius: 4,
+                        offset: const Offset(0, 2),
+                      ),
+                    ],
                   ),
-                  child: Icon(Icons.person, color: colorScheme.onSurfaceVariant),
+                  child: const Icon(
+                    Icons.person,
+                    color: Colors.black54,
+                  ),
                 ),
               ],
             ),
@@ -92,7 +134,7 @@ class HomeContentWidgets {
   static Widget appBar(BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
-    
+
     return SliverAppBar(
       pinned: true,
       floating: false,
@@ -145,7 +187,7 @@ class HomeContentWidgets {
   static Widget content(BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
-    
+
     return SliverToBoxAdapter(
       child: Container(
         color: colorScheme.surfaceContainerHighest.withOpacity(0.3),

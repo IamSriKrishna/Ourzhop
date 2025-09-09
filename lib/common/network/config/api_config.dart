@@ -9,6 +9,9 @@ class ApiConfig {
   static const String otpVerify = '/verify-otp';
   static const String accountSetup = '/users/profile';
 
+
+  static const String categories = '/categories';
+
   static const Map<String, String> header = <String, String>{
     'content-Type': 'application/json',
   };

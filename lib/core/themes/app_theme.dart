@@ -287,6 +287,7 @@ class AppThemes {
       inputDecorationTheme: InputDecorationTheme(
         border: textFieldStyle,
         enabledBorder: textFieldStyle.copyWith(
+          
           borderSide: BorderSide(color: AppColors.light.outline),
         ),
         focusedBorder: textFieldStyle.copyWith(

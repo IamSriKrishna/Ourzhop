@@ -21,6 +21,7 @@ class HomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final List<AppNamedNavigationBarItem> tabs = _buildTabs(context);
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       body: screen,
       floatingActionButton: _buildFloatingBottomNavigation(context, tabs),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,

@@ -18,10 +18,10 @@ class AppColors {
 
   /// Primary brand color - Main brand identity (from design system)
   /// Used for: Primary buttons, key CTAs, brand elements
-  static const Color primaryPurple = Color(0xFF8A38F5);
+  static const Color primaryPurple = Color.fromRGBO(138, 56, 245, 1);
 
   /// Primary variant - Darker shade for interactions
-  static const Color primaryPurpleDark = Color(0xFF7429E8);
+  static const Color primaryPurpleDark = Color.fromRGBO(138, 56, 245, 1);
 
   /// Primary variant - Lighter shade for backgrounds
   static const Color primaryPurpleLight = Color(0xFFD1AEFF);

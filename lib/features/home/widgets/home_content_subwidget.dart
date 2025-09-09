@@ -13,7 +13,7 @@ class HomeContentSubwidget {
       String label, IconData icon, bool isSelected, BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
-    
+
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
@@ -55,7 +55,7 @@ class HomeContentSubwidget {
   static Widget buildStoreCard(BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
-    
+
     return Container(
       margin: const EdgeInsets.only(left: 20, right: 20, bottom: 20),
       decoration: BoxDecoration(
@@ -143,14 +143,17 @@ class HomeContentSubwidget {
                     const SizedBox(width: 5),
                     Text(
                       'Free delivery',
-                      style: TextStyle(color: colorScheme.onSurfaceVariant, fontSize: 12),
+                      style: TextStyle(
+                          color: colorScheme.onSurfaceVariant, fontSize: 12),
                     ),
                     const SizedBox(width: 15),
-                    Icon(Icons.access_time, color: colorScheme.onSurfaceVariant, size: 16),
+                    Icon(Icons.access_time,
+                        color: colorScheme.onSurfaceVariant, size: 16),
                     const SizedBox(width: 5),
                     Text(
                       '10-15 mins • 5 Kms',
-                      style: TextStyle(color: colorScheme.onSurfaceVariant, fontSize: 12),
+                      style: TextStyle(
+                          color: colorScheme.onSurfaceVariant, fontSize: 12),
                     ),
                   ],
                 ),
@@ -173,7 +176,7 @@ class HomeContentSubwidget {
   static Widget homeCarousel(BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
-    
+
     return BlocProvider(
       create: (context) => CarouselCubit(),
       child: Column(
@@ -239,7 +242,7 @@ class HomeContentSubwidget {
   static Widget tabContent(BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
-    
+
     return BlocProvider(
       create: (context) => TabCubit(),
       child: BlocBuilder<TabCubit, TabType>(
@@ -334,7 +337,7 @@ class HomeContentSubwidget {
   static Widget recommendedWidgets(BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
-    
+
     return SizedBox(
       height: 300,
       width: double.infinity,
@@ -375,6 +378,13 @@ class HomeContentSubwidget {
                     child: Container(
                       decoration: BoxDecoration(
                         color: colorScheme.surface,
+                        border: Border(
+                            right: BorderSide(
+                                color: Color.fromRGBO(97, 101, 106, 1)),
+                            left: BorderSide(
+                                color: Color.fromRGBO(97, 101, 106, 1)),
+                            bottom: BorderSide(
+                                color: Color.fromRGBO(97, 101, 106, 1))),
                         borderRadius: const BorderRadius.only(
                             bottomLeft: Radius.circular(10),
                             bottomRight: Radius.circular(10)),
@@ -440,7 +450,8 @@ class HomeContentSubwidget {
                                   Container(
                                     padding: const EdgeInsets.all(4),
                                     decoration: BoxDecoration(
-                                      color: colorScheme.surfaceContainerHighest.withOpacity(0.5),
+                                      color: colorScheme.surfaceContainerHighest
+                                          .withOpacity(0.5),
                                       borderRadius: BorderRadius.circular(4),
                                     ),
                                     child: Image.asset(
@@ -462,7 +473,8 @@ class HomeContentSubwidget {
                               Container(
                                 padding: const EdgeInsets.all(4),
                                 decoration: BoxDecoration(
-                                  color: colorScheme.surfaceContainerHighest.withOpacity(0.5),
+                                  color: colorScheme.surfaceContainerHighest
+                                      .withOpacity(0.5),
                                   borderRadius: BorderRadius.circular(4),
                                 ),
                                 child: Image.asset(
