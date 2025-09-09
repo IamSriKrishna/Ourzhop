@@ -2,6 +2,7 @@
 
 // Flutter imports:
 import 'package:customer_app/features/auth/presentation/screens/location_selection_screen.dart';
+import 'package:customer_app/features/home/presentation/screens/search_screen.dart';
 import 'package:flutter/material.dart';
 
 // Package imports:
@@ -56,8 +57,15 @@ class AppRouter {
                     return DetailsScreen(id: id);
                   },
                 ),
+                //search screen
+                GoRoute(
+                  path: AppRoutes.searchScreen,parentNavigatorKey: AppRouter.rootNavigatorKey,
+                  name: AppRoutes.searchScreen,
+                  builder: (context, state) => SearchScreen(),
+                ),
               ],
             ),
+
             // Profile Tab
             GoRoute(
               path: AppRoutes.profile,
@@ -101,76 +109,79 @@ class AppRouter {
           name: 'location-selection',
           builder: (context, state) => LocationSelectionScreen(),
         ),
-      ];static Future<String?> _redirectLogic(
-    BuildContext context, GoRouterState state) async {
-  final logger = AppLogger();
-  final authService = AuthPreferenceService();
+      ];
+  static Future<String?> _redirectLogic(
+      BuildContext context, GoRouterState state) async {
+    final logger = AppLogger();
+    final authService = AuthPreferenceService();
 
-  // Define constant paths
-  const String loginPath = AppRoutes.login;
-  const String verifyOtpPath = AppRoutes.otp;
-  const String accountSetupPath = AppRoutes.accountSetup;
-  const String locationSelectionPath = AppRoutes.locationSelection;
-  const String homePath = AppRoutes.home;
+    // Define constant paths
+    const String loginPath = AppRoutes.login;
+    const String verifyOtpPath = AppRoutes.otp;
+    const String accountSetupPath = AppRoutes.accountSetup;
+    const String locationSelectionPath = AppRoutes.locationSelection;
+    const String homePath = AppRoutes.home;
 
-  final currentPath = state.uri.toString();
+    final currentPath = state.uri.toString();
 
-  try {
-    final bool isLoggedIn = await authService.isLoggedIn();
-    final bool isUserNew = await authService.isUserNew();
-    final bool hasSelectedLocation = await authService.hasSelectedLocation();
+    try {
+      final bool isLoggedIn = await authService.isLoggedIn();
+      final bool isUserNew = await authService.isUserNew();
+      final bool hasSelectedLocation = await authService.hasSelectedLocation();
 
-    logger.info('Redirect check - '
-        'LoggedIn: $isLoggedIn, '
-        'IsNew: $isUserNew, '
-        'HasLocation: $hasSelectedLocation, '
-        'CurrentPath: $currentPath');
+      logger.info('Redirect check - '
+          'LoggedIn: $isLoggedIn, '
+          'IsNew: $isUserNew, '
+          'HasLocation: $hasSelectedLocation, '
+          'CurrentPath: $currentPath');
 
-    // If not logged in, redirect to login (except for OTP verification)
-    if (!isLoggedIn) {
-      if (currentPath != verifyOtpPath && currentPath != loginPath) {
-        logger.info('User not logged in. Redirecting to Sign-in page.');
-        return loginPath;
+      // If not logged in, redirect to login (except for OTP verification)
+      if (!isLoggedIn) {
+        if (currentPath != verifyOtpPath && currentPath != loginPath) {
+          logger.info('User not logged in. Redirecting to Sign-in page.');
+          return loginPath;
+        }
+        return null; // Allow login and OTP screens
       }
-      return null; // Allow login and OTP screens
-    }
 
-    // User is logged in - check the flow
-    if (isUserNew) {
-      // New user must complete account setup first
-      if (currentPath != accountSetupPath && currentPath != verifyOtpPath) {
-        logger.info('New user detected. Redirecting to Account Setup page.');
-        return accountSetupPath;
+      // User is logged in - check the flow
+      if (isUserNew) {
+        // New user must complete account setup first
+        if (currentPath != accountSetupPath && currentPath != verifyOtpPath) {
+          logger.info('New user detected. Redirecting to Account Setup page.');
+          return accountSetupPath;
+        }
+        return null; // Allow account setup screen
       }
-      return null; // Allow account setup screen
-    }
 
-    // Existing user but hasn't selected location
-    if (!hasSelectedLocation) {
-      if (currentPath != locationSelectionPath && 
-          currentPath != accountSetupPath && 
-          currentPath != verifyOtpPath) {
-        logger.info('User needs to select location. Redirecting to Location Selection page.');
-        return locationSelectionPath;
+      // Existing user but hasn't selected location
+      if (!hasSelectedLocation) {
+        if (currentPath != locationSelectionPath &&
+            currentPath != accountSetupPath &&
+            currentPath != verifyOtpPath) {
+          logger.info(
+              'User needs to select location. Redirecting to Location Selection page.');
+          return locationSelectionPath;
+        }
+        return null; // Allow location selection screen
       }
-      return null; // Allow location selection screen
-    }
 
-    // User is logged in, not new, and has selected location
-    // Prevent going back to auth screens
-    if (currentPath == loginPath || 
-        currentPath == verifyOtpPath || 
-        currentPath == accountSetupPath || 
-        currentPath == locationSelectionPath) {
-      logger.info('User already authenticated. Redirecting to Home.');
-      return homePath;
-    }
+      // User is logged in, not new, and has selected location
+      // Prevent going back to auth screens
+      if (currentPath == loginPath ||
+          currentPath == verifyOtpPath ||
+          currentPath == accountSetupPath ||
+          currentPath == locationSelectionPath) {
+        logger.info('User already authenticated. Redirecting to Home.');
+        return homePath;
+      }
 
-    // Allow access to the requested route
-    logger.info('Proceeding to requested route: $currentPath');
-    return null;
-  } catch (e, stackTrace) {
-    logger.error('Redirect logic failed: $e', stackTrace);
-    return null;
+      // Allow access to the requested route
+      logger.info('Proceeding to requested route: $currentPath');
+      return null;
+    } catch (e, stackTrace) {
+      logger.error('Redirect logic failed: $e', stackTrace);
+      return null;
+    }
   }
-}}
+}

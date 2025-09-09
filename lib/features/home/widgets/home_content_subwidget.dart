@@ -5,12 +5,13 @@ import 'package:customer_app/core/cubit/home_content_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:shimmer/shimmer.dart';
 
 class HomeContentSubwidget {
-  HomeContentSubwidget._();
-
+  const HomeContentSubwidget._();
   static Widget buildStickyCategory(
-      String label, IconData icon, bool isSelected, BuildContext context) {
+      String label, String img, bool isSelected, BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
 
@@ -23,7 +24,8 @@ class HomeContentSubwidget {
           decoration: BoxDecoration(
             color: colorScheme.surface,
             border: Border.all(
-                color: isSelected ? colorScheme.primary : colorScheme.surface),
+              color: isSelected ? colorScheme.primary : colorScheme.surface,
+            ),
             shape: BoxShape.circle,
             boxShadow: [
               BoxShadow(
@@ -33,10 +35,18 @@ class HomeContentSubwidget {
               ),
             ],
           ),
-          child: Icon(
-            icon,
+          child: CachedNetworkImage(
+            imageUrl: img,
             color: colorScheme.primary,
-            size: 24,
+            height: 24,
+            width: 24,
+            fit: BoxFit.contain,
+            
+            errorWidget: (context, url, error) => Icon(
+              Icons.error,
+              color: colorScheme.error,
+              size: 24,
+            ),
           ),
         ),
         const SizedBox(height: 8),
@@ -46,6 +56,39 @@ class HomeContentSubwidget {
             fontSize: 12,
             color: isSelected ? colorScheme.primary : colorScheme.onSurface,
             fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
+          ),
+        ),
+      ],
+    );
+  }
+
+  static Widget buildStickyCategoryShimmer(BuildContext context) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Shimmer.fromColors(
+          baseColor: Colors.grey.shade300,
+          highlightColor: Colors.grey.shade100,
+          child: Container(
+            width: 50,
+            height: 50,
+            decoration: const BoxDecoration(
+              color: Colors.white,
+              shape: BoxShape.circle,
+            ),
+          ),
+        ),
+        const SizedBox(height: 8),
+        Shimmer.fromColors(
+          baseColor: Colors.grey.shade300,
+          highlightColor: Colors.grey.shade100,
+          child: Container(
+            width: 40,
+            height: 10,
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(4),
+            ),
           ),
         ),
       ],

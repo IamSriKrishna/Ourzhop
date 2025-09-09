@@ -6,7 +6,10 @@ class AppRoutes {
   static const String login = '/login';
   static const String register = '/register';
   static const String otp = '/otp';
-  static const String setPassword = '/set-password'; 
+  static const String setPassword = '/set-password';
   static const String accountSetup = '/account-setup';
   static const String locationSelection = '/location-selection';
+
+  //home
+  static const String searchScreen = '/search-screen';
 }

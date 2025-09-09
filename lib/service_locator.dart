@@ -1,6 +1,5 @@
 // Package imports:
 import 'package:connectivity_plus/connectivity_plus.dart';
-import 'package:customer_app/features/auth/domain/usecases/register_usecase.dart';
 import 'package:dio/dio.dart';
 import 'package:get_it/get_it.dart';
 
@@ -18,6 +17,14 @@ import 'package:customer_app/features/auth/domain/usecases/login_usecase.dart';
 import 'package:customer_app/features/auth/presentation/bloc/auth_bloc.dart';
 import 'features/auth/domain/usecases/otp_verify_usecase.dart';
 
+// Category imports:
+import 'package:customer_app/features/auth/domain/usecases/register_usecase.dart';
+import 'package:customer_app/features/home/data/datasources/category_remote_data_source.dart';
+import 'package:customer_app/features/home/data/repositories/category_repo_impl.dart';
+import 'package:customer_app/features/home/domain/repositories/category_repository.dart';
+import 'package:customer_app/features/home/domain/usecase/category_usecase.dart';
+import 'package:customer_app/features/home/presentation/bloc/home_bloc.dart';
+
 final GetIt serviceLocator = GetIt.instance;
 
 Future<void> initServiceLocator() async {
@@ -32,6 +39,9 @@ Future<void> initServiceLocator() async {
 
   // Auth Features
   _registerAuthFeatures();
+
+  // Category Features
+  _registerCategoryFeatures();
 
   // Error handling
   // _registerErrorHandler();
@@ -84,6 +94,30 @@ void _registerAuthFeatures() {
   );
   // Preference Service
   serviceLocator.registerLazySingleton(() => AuthPreferenceService());
+}
+
+void _registerCategoryFeatures() {
+  // Bloc
+  serviceLocator.registerFactory(
+    () => CategoryBloc(
+      getCategories: serviceLocator<GetCategoriesUseCase>(),
+    ),
+  );
+
+  // Use Cases
+  serviceLocator.registerLazySingleton(
+    () => GetCategoriesUseCase(serviceLocator()),
+  );
+
+  // Repository
+  serviceLocator.registerLazySingleton<CategoryRepository>(
+    () => CategoryRepositoryImpl(remoteDataSource: serviceLocator()),
+  );
+
+  // Data Sources
+  serviceLocator.registerLazySingleton<CategoryRemoteDataSource>(
+    () => CategoryRemoteDataSourceImpl(),
+  );
 }
 
 // void _registerErrorHandler() {

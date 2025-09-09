@@ -1,6 +1,10 @@
+import 'package:customer_app/constants/app_route_constants.dart';
 import 'package:customer_app/core/app_extension.dart';
+import 'package:customer_app/features/home/presentation/bloc/home_bloc.dart';
 import 'package:customer_app/features/home/widgets/home_content_subwidget.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 
 class HomeContentWidgets {
   HomeContentWidgets._();
@@ -32,6 +36,10 @@ class HomeContentWidgets {
                       ],
                     ),
                     child: TextField(
+                      onTap: () {
+                        
+                     context.goNamed(AppRoutes.searchScreen);
+                      },
                       decoration: InputDecoration(
                         hintText: 'Search for "store name"',
                         prefixIcon: Container(
@@ -44,10 +52,10 @@ class HomeContentWidgets {
                         ),
                         border: InputBorder.none,
                         enabledBorder: OutlineInputBorder(
-                          borderSide: BorderSide(color: Colors.white),
+                            borderSide: BorderSide(color: Colors.white),
                             borderRadius: BorderRadius.circular(20)),
                         focusedBorder: OutlineInputBorder(
-                          borderSide: BorderSide(color: Colors.white),
+                            borderSide: BorderSide(color: Colors.white),
                             borderRadius: BorderRadius.circular(20)),
                         filled: true,
                         fillColor: Colors.white,
@@ -132,8 +140,7 @@ class HomeContentWidgets {
   }
 
   static Widget appBar(BuildContext context) {
-    final theme = Theme.of(context);
-    final colorScheme = theme.colorScheme;
+    final colorScheme = Theme.of(context).colorScheme;
 
     return SliverAppBar(
       pinned: true,
@@ -156,29 +163,71 @@ class HomeContentWidgets {
             ],
           ),
         ),
-        child: Stack(
-          children: [
-            Positioned(
-              top: 50,
-              left: 0,
-              right: 0,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        child: BlocBuilder<CategoryBloc, CategoryState>(
+          builder: (context, state) {
+            if (state is CategoryLoading) {
+              return Stack(
                 children: [
-                  HomeContentSubwidget.buildStickyCategory(
-                      'All', Icons.apps, false, context),
-                  HomeContentSubwidget.buildStickyCategory(
-                      'Grocery', Icons.shopping_cart, true, context),
-                  HomeContentSubwidget.buildStickyCategory(
-                      'Electronics', Icons.headphones, false, context),
-                  HomeContentSubwidget.buildStickyCategory(
-                      'Bakery', Icons.cake, false, context),
-                  HomeContentSubwidget.buildStickyCategory(
-                      'Medicine', Icons.medical_services, false, context),
+                  Positioned(
+                    top: 50,
+                    left: 0,
+                    right: 0,
+                    child: SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      padding: const EdgeInsets.symmetric(horizontal: 12),
+                      child: Row(
+                        children: List.generate(
+                            16,
+                            (index) => Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 10),
+                                  child: HomeContentSubwidget
+                                      .buildStickyCategoryShimmer(context),
+                                )),
+                      ),
+                    ),
+                  )
                 ],
-              ),
-            ),
-          ],
+              );
+            }
+            if (state is CategoryError) {
+              return Center(
+                child: Text(
+                  state.message,
+                  style: TextStyle(color: colorScheme.error),
+                ),
+              );
+            }
+            if (state is CategoryLoaded) {
+              return Stack(
+                children: [
+                  Positioned(
+                    top: 50,
+                    left: 0,
+                    right: 0,
+                    child: SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      padding: const EdgeInsets.symmetric(horizontal: 12),
+                      child: Row(
+                        children: state.categories.map((category) {
+                          return Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 6),
+                            child: HomeContentSubwidget.buildStickyCategory(
+                              category.name,
+                              category.iconUrl,
+                              false,
+                              context,
+                            ),
+                          );
+                        }).toList(),
+                      ),
+                    ),
+                  ),
+                ],
+              );
+            }
+            return const SizedBox.shrink();
+          },
         ),
       ),
     );
