@@ -1,12 +1,13 @@
 // ignore_for_file: deprecated_member_use
 
+import 'package:customer_app/constants/app_route_constants.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 class SearchResult {
   final String id;
   final String name;
-  final String type; 
+  final String type;
   final String imageUrl;
   final String? subtitle;
 
@@ -44,12 +45,10 @@ class SearchScreenWidgets {
                 minWidth: 40,
                 minHeight: 40,
               ),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                shape: BoxShape.circle
-              ),
+              decoration:
+                  BoxDecoration(color: Colors.white, shape: BoxShape.circle),
               child: Padding(
-                padding: const EdgeInsets.only(left:  8.0),
+                padding: const EdgeInsets.only(left: 8.0),
                 child: Icon(
                   Icons.arrow_back_ios,
                   color: Colors.black,
@@ -58,9 +57,7 @@ class SearchScreenWidgets {
               ),
             ),
           ),
-
           const SizedBox(width: 8),
-
           Expanded(
             child: Container(
               height: 48,
@@ -131,7 +128,7 @@ class SearchScreenWidgets {
     );
   }
 
-  static Widget searchResults(BuildContext context) {
+  static Widget searchResults(BuildContext context, bool ishome) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
 
@@ -204,7 +201,8 @@ class SearchScreenWidgets {
                 itemCount: results.length,
                 itemBuilder: (context, index) {
                   final result = results[index];
-                  return _buildSearchResultItem(result, context);
+                  return _buildSearchResultItem(result, context,
+                      isHome: ishome);
                 },
               ),
       ),
@@ -212,19 +210,16 @@ class SearchScreenWidgets {
   }
 
   static Widget _buildSearchResultItem(
-      SearchResult result, BuildContext context) {
+      SearchResult result, BuildContext context,
+      {required bool isHome}) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
 
     return InkWell(
       onTap: () {
-        debugPrint('Tapped on: ${result.name}');
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Selected ${result.name}'),
-            duration: const Duration(seconds: 1),
-          ),
-        );
+        isHome
+            ? context.goNamed(AppRoutes.storeListScreen)
+            : context.goNamed(AppRoutes.categoryStoreListScreen);
       },
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
@@ -252,9 +247,7 @@ class SearchScreenWidgets {
                 ),
               ),
             ),
-
             const SizedBox(width: 16),
-
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,

@@ -22,7 +22,10 @@ class BottomNavigationCubit extends Cubit<BottomNavigationState> {
         navItem = AppRoutes.home;
         break;
       case 1:
-        navItem = AppRoutes.profile;
+        navItem = AppRoutes.categoryScreen;
+        break;
+      case 2:
+        navItem = AppRoutes.cartScreen;
         break;
 
       default:

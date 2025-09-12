@@ -2,7 +2,11 @@
 
 // Flutter imports:
 import 'package:customer_app/features/auth/presentation/screens/location_selection_screen.dart';
+import 'package:customer_app/features/cart/presentation/screen/cart_screen.dart';
+import 'package:customer_app/features/category/presentation/screens/category_screen.dart';
 import 'package:customer_app/features/home/presentation/screens/search_screen.dart';
+import 'package:customer_app/features/home/presentation/screens/store_screen.dart';
+import 'package:customer_app/features/home/presentation/screens/store_screen_list.dart';
 import 'package:flutter/material.dart';
 
 // Package imports:
@@ -49,35 +53,72 @@ class AppRouter {
               name: 'home',
               builder: (context, state) => HomeContent(),
               routes: [
+                // GoRoute(
+                //   path: AppRoutes.details,
+                //   name: 'details',
+                //   builder: (context, state) {
+                //     final id = state.pathParameters['id']!;
+                //     return DetailsScreen(id: id);
+                //   },
+                // ),
                 GoRoute(
-                  path: AppRoutes.details,
-                  name: 'details',
+                  parentNavigatorKey: AppRouter.rootNavigatorKey,
+                  path: AppRoutes.storeScreen,
+                  name: AppRoutes.storeScreen,
                   builder: (context, state) {
-                    final id = state.pathParameters['id']!;
-                    return DetailsScreen(id: id);
+                    return StoreScreen();
                   },
                 ),
                 //search screen
                 GoRoute(
-                  path: AppRoutes.searchScreen,parentNavigatorKey: AppRouter.rootNavigatorKey,
-                  name: AppRoutes.searchScreen,
-                  builder: (context, state) => SearchScreen(),
-                ),
+                    path: AppRoutes.searchScreen,
+                    parentNavigatorKey: AppRouter.rootNavigatorKey,
+                    name: AppRoutes.searchScreen,
+                    builder: (context, state) => SearchScreen(
+                          isHome: true,
+                        ),
+                    routes: [
+                      //store screen
+                      GoRoute(
+                        path: AppRoutes.storeListScreen,
+                        parentNavigatorKey: AppRouter.rootNavigatorKey,
+                        name: AppRoutes.storeListScreen,
+                        builder: (context, state) => StoreScreenList(),
+                      ),
+                    ]),
               ],
             ),
 
             // Profile Tab
             GoRoute(
-              path: AppRoutes.profile,
-              name: 'profile',
-              builder: (context, state) => ProfileScreen(),
+              path: AppRoutes.categoryScreen,
+              name: AppRoutes.categoryScreen,
+              builder: (context, state) => CategoriesScreen(),
               routes: [
+                //search screen
                 GoRoute(
-                  path: 'settings',
-                  name: 'settings',
-                  builder: (context, state) => SettingsScreen(),
-                ),
+                    path: AppRoutes.categorySearchScreen,
+                    parentNavigatorKey: AppRouter.rootNavigatorKey,
+                    name: AppRoutes.categorySearchScreen,
+                    builder: (context, state) => SearchScreen(
+                          isHome: false,
+                        ),
+                    routes: [
+                      //store screen
+                      GoRoute(
+                        path: AppRoutes.categoryStoreListScreen,
+                        parentNavigatorKey: AppRouter.rootNavigatorKey,
+                        name: AppRoutes.categoryStoreListScreen,
+                        builder: (context, state) => StoreScreenList(),
+                      ),
+                    ]),
               ],
+            ),
+            GoRoute(
+              path: AppRoutes.cartScreen,
+              name: AppRoutes.cartScreen,
+              builder: (context, state) => CartContent(),
+              routes: [],
             ),
           ],
         ),

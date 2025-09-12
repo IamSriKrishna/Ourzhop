@@ -36,12 +36,12 @@ class HomeScreen extends StatelessWidget {
         label: context.tr.bottomNavHubs,
       ),
       AppNamedNavigationBarItem(
-        initialLocation: AppRoutes.profile,
+        initialLocation: AppRoutes.categoryScreen,
         icon: Image.asset(AppIcons.more),
         label: context.tr.bottomNavProfile,
       ),
       AppNamedNavigationBarItem(
-        initialLocation: AppRoutes.profile,
+        initialLocation: AppRoutes.cartScreen,
         icon: Image.asset(AppIcons.shoppingBag),
         label: context.tr.bottomNavProfile,
       ),

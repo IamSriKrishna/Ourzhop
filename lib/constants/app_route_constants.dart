@@ -1,7 +1,6 @@
 class AppRoutes {
   static const String home = '/';
   static const String details = '/details/:id';
-  static const String profile = '/profile';
   static const String settings = '/settings';
   static const String login = '/login';
   static const String register = '/register';
@@ -12,4 +11,12 @@ class AppRoutes {
 
   //home
   static const String searchScreen = '/search-screen';
+  static const String storeListScreen = '/store-list-screen';
+  static const String storeScreen = '/store-screen';
+  //category
+  static const String categorySearchScreen = '/category-search-screen';
+  static const String categoryStoreListScreen = '/category-store-list-screen';
+  static const String categoryScreen = '/category-screen';
+  //cart
+  static const String cartScreen = '/cart-screen';
 }

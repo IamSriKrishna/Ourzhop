@@ -1,11 +1,13 @@
 // ignore_for_file: deprecated_member_use
 
 import 'package:customer_app/constants/app_icons.dart';
+import 'package:customer_app/constants/app_route_constants.dart';
 import 'package:customer_app/core/cubit/home_content_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:cached_network_image/cached_network_image.dart';
+import 'package:go_router/go_router.dart';
+import 'package:logger/logger.dart';
 import 'package:shimmer/shimmer.dart';
 
 class HomeContentSubwidget {
@@ -35,14 +37,9 @@ class HomeContentSubwidget {
               ),
             ],
           ),
-          child: CachedNetworkImage(
-            imageUrl: img,
-            color: colorScheme.primary,
-            height: 24,
-            width: 24,
-            fit: BoxFit.contain,
-            
-            errorWidget: (context, url, error) => Icon(
+          child: Image.network(
+            img,
+            errorBuilder: (context, url, error) => Icon(
               Icons.error,
               color: colorScheme.error,
               size: 24,
@@ -390,164 +387,174 @@ class HomeContentSubwidget {
         itemBuilder: (context, index) {
           return Padding(
             padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 10),
-            child: Container(
-              height: double.infinity,
-              width: 350,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(10),
-                boxShadow: [
-                  BoxShadow(
-                    color: colorScheme.shadow.withOpacity(0.2),
-                    spreadRadius: 1,
-                    blurRadius: 5,
-                    offset: const Offset(0, 2),
-                  ),
-                ],
-              ),
-              child: Column(
-                children: [
-                  ClipRRect(
-                    borderRadius: const BorderRadius.only(
-                        topLeft: Radius.circular(10),
-                        topRight: Radius.circular(10)),
-                    child: Image.network(
-                      "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fwww.tastingtable.com%2Fimg%2Fgallery%2Fthe-high-tech-1940s-grocery-cart-innovation-that-never-took-off%2Fl-intro-1673549255.jpg&f=1&nofb=1&ipt=9be9defe43553b5e548832668f422fef0d5d7b57152b04bb529226edbf179abb",
-                      height: MediaQuery.of(context).size.height * 0.17,
-                      fit: BoxFit.cover,
-                      width: double.infinity,
+            child: GestureDetector(
+              onTap: () {
+                Logger().i("tapped");
+                context.goNamed(AppRoutes.storeScreen);
+              },
+              child: Container(
+                height: double.infinity,
+                width: 350,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(10),
+                  boxShadow: [
+                    BoxShadow(
+                      color: colorScheme.shadow.withOpacity(0.2),
+                      spreadRadius: 1,
+                      blurRadius: 5,
+                      offset: const Offset(0, 2),
                     ),
-                  ),
-                  Expanded(
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: colorScheme.surface,
-                        border: Border(
-                            right: BorderSide(
-                                color: Color.fromRGBO(97, 101, 106, 1)),
-                            left: BorderSide(
-                                color: Color.fromRGBO(97, 101, 106, 1)),
-                            bottom: BorderSide(
-                                color: Color.fromRGBO(97, 101, 106, 1))),
-                        borderRadius: const BorderRadius.only(
-                            bottomLeft: Radius.circular(10),
-                            bottomRight: Radius.circular(10)),
+                  ],
+                ),
+                child: Column(
+                  children: [
+                    ClipRRect(
+                      borderRadius: const BorderRadius.only(
+                          topLeft: Radius.circular(10),
+                          topRight: Radius.circular(10)),
+                      child: Image.network(
+                        "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fwww.tastingtable.com%2Fimg%2Fgallery%2Fthe-high-tech-1940s-grocery-cart-innovation-that-never-took-off%2Fl-intro-1673549255.jpg&f=1&nofb=1&ipt=9be9defe43553b5e548832668f422fef0d5d7b57152b04bb529226edbf179abb",
+                        height: MediaQuery.of(context).size.height * 0.17,
+                        fit: BoxFit.cover,
+                        width: double.infinity,
                       ),
-                      padding: const EdgeInsets.all(12),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            children: [
-                              Expanded(
-                                child: Text(
-                                  "Store name",
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.bold,
-                                    color: colorScheme.onSurface,
+                    ),
+                    Expanded(
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: colorScheme.surface,
+                          border: Border(
+                              right: BorderSide(
+                                  width: 1,
+                                  color: Color.fromRGBO(97, 101, 106, 1)),
+                              left: BorderSide(
+                                  width: 1,
+                                  color: Color.fromRGBO(97, 101, 106, 1)),
+                              bottom: BorderSide(
+                                  width: 1,
+                                  color: Color.fromRGBO(97, 101, 106, 1))),
+                          borderRadius: const BorderRadius.only(
+                              bottomLeft: Radius.circular(10),
+                              bottomRight: Radius.circular(10)),
+                        ),
+                        padding: const EdgeInsets.all(12),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: Text(
+                                    "Store name",
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold,
+                                      color: colorScheme.onSurface,
+                                    ),
                                   ),
                                 ),
-                              ),
-                              Container(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 8, vertical: 4),
-                                decoration: BoxDecoration(
-                                  color: Colors.green,
-                                  borderRadius: BorderRadius.circular(12),
-                                ),
-                                child: const Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    Text(
-                                      "4.5",
-                                      style: TextStyle(
+                                Container(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 8, vertical: 4),
+                                  decoration: BoxDecoration(
+                                    color: Colors.green,
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                  child: const Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Text(
+                                        "4.5",
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 12,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                      SizedBox(width: 2),
+                                      Icon(
+                                        Icons.star,
                                         color: Colors.white,
-                                        fontSize: 12,
-                                        fontWeight: FontWeight.bold,
+                                        size: 12,
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 4),
+                            Text(
+                              "Grocery • Bakery • Fresh",
+                              style: TextStyle(
+                                fontSize: 12,
+                                color: colorScheme.onSurfaceVariant,
+                              ),
+                            ),
+                            const SizedBox(height: 8),
+                            Row(
+                              children: [
+                                Row(
+                                  children: [
+                                    Container(
+                                      padding: const EdgeInsets.all(4),
+                                      decoration: BoxDecoration(
+                                        color: colorScheme
+                                            .surfaceContainerHighest
+                                            .withOpacity(0.5),
+                                        borderRadius: BorderRadius.circular(4),
+                                      ),
+                                      child: Image.asset(
+                                        AppIcons.shoppingBag,
+                                        color: colorScheme.primary,
                                       ),
                                     ),
-                                    SizedBox(width: 2),
-                                    Icon(
-                                      Icons.star,
-                                      color: Colors.white,
-                                      size: 12,
+                                    const SizedBox(width: 4),
+                                    Text(
+                                      "Free delivery",
+                                      style: TextStyle(
+                                        fontSize: 11,
+                                        color: colorScheme.onSurfaceVariant,
+                                      ),
                                     ),
                                   ],
                                 ),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 4),
-                          Text(
-                            "Grocery • Bakery • Fresh",
-                            style: TextStyle(
-                              fontSize: 12,
-                              color: colorScheme.onSurfaceVariant,
+                                const SizedBox(width: 8),
+                                Container(
+                                  padding: const EdgeInsets.all(4),
+                                  decoration: BoxDecoration(
+                                    color: colorScheme.surfaceContainerHighest
+                                        .withOpacity(0.5),
+                                    borderRadius: BorderRadius.circular(4),
+                                  ),
+                                  child: Image.asset(
+                                    AppIcons.timing,
+                                    color: colorScheme.primary,
+                                  ),
+                                ),
+                                const SizedBox(width: 4),
+                                Text(
+                                  "30 mins",
+                                  style: TextStyle(
+                                    fontSize: 11,
+                                    color: colorScheme.onSurfaceVariant,
+                                  ),
+                                ),
+                                const SizedBox(width: 8),
+                                Text(
+                                  "• 5 kms",
+                                  style: TextStyle(
+                                    fontSize: 11,
+                                    color: colorScheme.onSurfaceVariant,
+                                  ),
+                                ),
+                              ],
                             ),
-                          ),
-                          const SizedBox(height: 8),
-                          Row(
-                            children: [
-                              Row(
-                                children: [
-                                  Container(
-                                    padding: const EdgeInsets.all(4),
-                                    decoration: BoxDecoration(
-                                      color: colorScheme.surfaceContainerHighest
-                                          .withOpacity(0.5),
-                                      borderRadius: BorderRadius.circular(4),
-                                    ),
-                                    child: Image.asset(
-                                      AppIcons.shoppingBag,
-                                      color: colorScheme.primary,
-                                    ),
-                                  ),
-                                  const SizedBox(width: 4),
-                                  Text(
-                                    "Free delivery",
-                                    style: TextStyle(
-                                      fontSize: 11,
-                                      color: colorScheme.onSurfaceVariant,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              const SizedBox(width: 8),
-                              Container(
-                                padding: const EdgeInsets.all(4),
-                                decoration: BoxDecoration(
-                                  color: colorScheme.surfaceContainerHighest
-                                      .withOpacity(0.5),
-                                  borderRadius: BorderRadius.circular(4),
-                                ),
-                                child: Image.asset(
-                                  AppIcons.timing,
-                                  color: colorScheme.primary,
-                                ),
-                              ),
-                              const SizedBox(width: 4),
-                              Text(
-                                "30 mins",
-                                style: TextStyle(
-                                  fontSize: 11,
-                                  color: colorScheme.onSurfaceVariant,
-                                ),
-                              ),
-                              const SizedBox(width: 8),
-                              Text(
-                                "• 5 kms",
-                                style: TextStyle(
-                                  fontSize: 11,
-                                  color: colorScheme.onSurfaceVariant,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
           );
