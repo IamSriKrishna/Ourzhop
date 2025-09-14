@@ -1,10 +1,12 @@
+// ignore_for_file: deprecated_member_use
+
 import 'package:customer_app/constants/app_route_constants.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 class CartContentWidgets {
   CartContentWidgets._();
-  
+
   static Widget appBar(BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
@@ -23,7 +25,6 @@ class CartContentWidgets {
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
             child: Row(
               children: [
-               
                 const SizedBox(width: 15),
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -83,9 +84,8 @@ class CartContentWidgets {
               padding: const EdgeInsets.symmetric(horizontal: 60),
               child: Column(
                 children: [
-                
                   const SizedBox(height: 40),
-                  // Empty cart message
+
                   Text(
                     'Cart is empty',
                     style: TextStyle(

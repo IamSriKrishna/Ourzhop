@@ -45,7 +45,6 @@ class HomeScreen extends StatelessWidget {
         icon: Image.asset(AppIcons.shoppingBag),
         label: context.tr.bottomNavProfile,
       ),
-      // Add more tabs if needed
     ];
   }
 

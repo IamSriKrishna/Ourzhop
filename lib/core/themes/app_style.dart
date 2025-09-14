@@ -279,7 +279,7 @@ class AppTypography {
   static TextStyle getOtpTitle(BuildContext context) {
     final appColors = context.appColors;
     return AppFonts.poppins(
-      weight: AppFonts.extraBold, // w800 - Poppins ExtraBold
+      weight: AppFonts.medium, // w800 - Poppins ExtraBold
       size: 32.0,
       height: 1.0, // 100% line height
       letterSpacing: 0.0, // 0% letter spacing
@@ -298,7 +298,19 @@ class AppTypography {
       color: appColors.onSurfaceVariant, // Theme-aware color for secondary text
     );
   }
- /// App Bar Title - Generic app bar title styling (Poppins SemiBold, 600 weight, 18px, 100% line height)
+
+  static TextStyle getAccountSetupTitle(BuildContext context) {
+    final appColors = context.appColors;
+    return AppFonts.poppins(
+      weight: AppFonts.medium, // w800 - Poppins ExtraBold
+      size: 32.0,
+      height: 1.0, // 100% line height
+      letterSpacing: 0.0, // 0% letter spacing
+      color: appColors.onBackground, // Theme-aware color
+    );
+  }
+
+  /// App Bar Title - Generic app bar title styling (Poppins SemiBold, 600 weight, 18px, 100% line height)
   static TextStyle getAppBarTitle(BuildContext context) {
     final appColors = context.appColors;
     return AppFonts.poppins(
@@ -321,6 +333,7 @@ class AppTypography {
       color: appColors.onSurface, // Theme-aware color
     );
   }
+
   /// Phone Number Display - "+91 89404 16286" (Poppins Medium, 500 weight, 19px, 100% line height)
   static TextStyle getPhoneNumberDisplay(BuildContext context) {
     final appColors = context.appColors;

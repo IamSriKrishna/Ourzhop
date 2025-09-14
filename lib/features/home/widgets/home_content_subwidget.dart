@@ -423,16 +423,16 @@ class HomeContentSubwidget {
                       child: Container(
                         decoration: BoxDecoration(
                           color: colorScheme.surface,
-                          border: Border(
-                              right: BorderSide(
-                                  width: 1,
-                                  color: Color.fromRGBO(97, 101, 106, 1)),
-                              left: BorderSide(
-                                  width: 1,
-                                  color: Color.fromRGBO(97, 101, 106, 1)),
-                              bottom: BorderSide(
-                                  width: 1,
-                                  color: Color.fromRGBO(97, 101, 106, 1))),
+                          // border: Border(
+                          //     right: BorderSide(
+                          //         width: 1,
+                          //         color: Color.fromRGBO(97, 101, 106, 1)),
+                          //     left: BorderSide(
+                          //         width: 1,
+                          //         color: Color.fromRGBO(97, 101, 106, 1)),
+                          //     bottom: BorderSide(
+                          //         width: 1,
+                          //         color: Color.fromRGBO(97, 101, 106, 1))),
                           borderRadius: const BorderRadius.only(
                               bottomLeft: Radius.circular(10),
                               bottomRight: Radius.circular(10)),

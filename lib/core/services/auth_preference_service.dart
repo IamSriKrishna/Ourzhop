@@ -5,7 +5,7 @@ import 'package:hive/hive.dart';
 import 'package:customer_app/features/auth/data/models/user_model.dart';
 
 class AuthPreferenceService {
-  static const _boxName = 'userPreferences';
+  static const _boxName = '';
   static const _isLoggedInKey = 'isLoggedIn';
   static const String _userKey = 'userData';
   static const String _hasSelectedLocationKey = 'hasSelectedLocation';

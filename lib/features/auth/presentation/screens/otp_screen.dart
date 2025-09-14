@@ -9,7 +9,6 @@ import 'package:go_router/go_router.dart';
 // Project imports:
 import 'package:customer_app/common/dialog/progress_dialog.dart';
 import 'package:customer_app/common/validators/validators.dart';
-import 'package:customer_app/common/widget/app_bottom_text_prompt.dart';
 import 'package:customer_app/common/widget/app_error_display.dart';
 import 'package:customer_app/common/widget/app_header_image.dart';
 import 'package:customer_app/common/widget/app_otp_text_field.dart';
@@ -49,7 +48,7 @@ class OtpScreen extends StatelessWidget {
                 child: SafeArea(
                   child: SingleChildScrollView(
                     padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                    child:  ConstrainedBox(
+                    child: ConstrainedBox(
                       constraints: BoxConstraints(
                         minHeight: MediaQuery.of(context).size.height -
                             MediaQuery.of(context).padding.top -

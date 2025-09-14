@@ -1,6 +1,7 @@
 // Flutter imports:
 import 'package:customer_app/common/widget/app_header_image.dart';
 import 'package:customer_app/core/themes/app_asset.dart';
+import 'package:customer_app/core/themes/app_style.dart';
 import 'package:flutter/material.dart';
 
 // Package imports:
@@ -50,8 +51,7 @@ class AccountSetupScreen extends StatelessWidget {
                     BlocConsumer<AuthBloc, AuthState>(
                       listener: (context, state) {
                         if (state is AccountSetupSuccess) {
-                          WidgetsBinding.instance
-                              .addPostFrameCallback((_) {
+                          WidgetsBinding.instance.addPostFrameCallback((_) {
                             context.go(
                               AppRoutes.locationSelection,
                             );
@@ -62,26 +62,24 @@ class AccountSetupScreen extends StatelessWidget {
                             state.error,
                             title: 'Account Setup Failed',
                             buttonLabel: 'Try Again',
-                            onPressed: () =>
-                                _onAccountSetupPressed(context),
+                            onPressed: () => _onAccountSetupPressed(context),
                           );
                         }
                       },
                       builder: (context, state) {
                         if (state is AccountSetupLoading) {
                           return ProgressDialog(
-                            title:
-                                context.tr.accountSetupProgressVerifying,
+                            title: context.tr.accountSetupProgressVerifying,
                             isProgressed: true,
                           );
                         }
                         return const SizedBox.shrink();
                       },
                     ),
-                    
+
                     // Spacer to push button to bottom
                     const Spacer(),
-                    
+
                     // Bottom Section - Button
                     _buildBottomSection(context),
                   ],
@@ -119,11 +117,10 @@ class AccountSetupScreen extends StatelessWidget {
           children: [
             const SizedBox(height: 20),
             Center(
-              child: Text(
-                context.tr.accountSetupPageTitle,
-                style: Theme.of(context).textTheme.displayLarge,
-              ),
-            ),
+                child: Text(
+              context.tr.accountSetupPageTitle,
+              style: AppTypography.getOtpTitle(context),
+            )),
             const SizedBox(height: 20),
             Center(
               child: Text(

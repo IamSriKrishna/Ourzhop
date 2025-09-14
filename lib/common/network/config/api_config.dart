@@ -11,6 +11,7 @@ class ApiConfig {
 
 
   static const String categories = '/categories';
+  static const String searchApi = '/search/places/autocomplete';
 
   static const Map<String, String> header = <String, String>{
     'content-Type': 'application/json',

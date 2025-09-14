@@ -1,5 +1,10 @@
 // Package imports:
 import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:customer_app/features/auth/data/datasources/location_remote_data_source.dart';
+import 'package:customer_app/features/auth/data/repositories/location_repositories_impl.dart';
+import 'package:customer_app/features/auth/domain/repositories/location_repository.dart';
+import 'package:customer_app/features/auth/domain/usecases/location_usercase.dart';
+import 'package:customer_app/features/auth/presentation/bloc/location/location_bloc.dart';
 import 'package:dio/dio.dart';
 import 'package:get_it/get_it.dart';
 
@@ -33,6 +38,8 @@ Future<void> initServiceLocator() async {
 
   // Localization handling
   _registerLocalization();
+  
+  _registerLocationFeatures();
 
   // Connectivity handling
   _registerConnectivity();
@@ -62,6 +69,30 @@ void _registerConnectivity() {
   serviceLocator.registerLazySingleton(() => Connectivity());
   serviceLocator
       .registerLazySingleton(() => ConnectivityBloc(serviceLocator()));
+}
+
+void _registerLocationFeatures() {
+  // Bloc
+  serviceLocator.registerFactory(
+    () => LocationSearchBloc(
+      searchLocationUseCase: serviceLocator<SearchLocationUseCase>(),
+    ),
+  );
+
+  // Use Cases
+  serviceLocator.registerLazySingleton(
+    () => SearchLocationUseCase(serviceLocator()),
+  );
+
+  // Repository
+  serviceLocator.registerLazySingleton<LocationRepository>(
+    () => LocationRepositoryImpl(remoteDataSource: serviceLocator()),
+  );
+
+  // Data Sources
+  serviceLocator.registerLazySingleton<LocationRemoteDataSource>(
+    () => LocationRemoteDataSourceImpl(),
+  );
 }
 
 void _registerAuthFeatures() {

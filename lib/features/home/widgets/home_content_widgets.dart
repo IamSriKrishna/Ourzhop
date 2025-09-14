@@ -1,3 +1,5 @@
+// ignore_for_file: deprecated_member_use
+
 import 'package:customer_app/constants/app_route_constants.dart';
 import 'package:customer_app/core/app_extension.dart';
 import 'package:customer_app/features/home/presentation/bloc/home_bloc.dart';
@@ -37,8 +39,7 @@ class HomeContentWidgets {
                     ),
                     child: TextField(
                       onTap: () {
-                        
-                     context.goNamed(AppRoutes.searchScreen);
+                        context.goNamed(AppRoutes.searchScreen);
                       },
                       decoration: InputDecoration(
                         hintText: 'Search for "store name"',
@@ -112,12 +113,17 @@ class HomeContentWidgets {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Text(
-                      location.toCapital,
-                      style: TextStyle(
-                        color: colorScheme.onPrimary,
-                        fontSize: 18,
-                        fontWeight: FontWeight.w600,
+                    Expanded(
+                      child: Text(
+                        location.toCapital,
+                        maxLines: 4,
+                        textAlign: TextAlign.center,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                          color: colorScheme.onPrimary,
+                          fontSize: 18,
+                          fontWeight: FontWeight.w600,
+                        ),
                       ),
                     ),
                     const SizedBox(width: 5),
