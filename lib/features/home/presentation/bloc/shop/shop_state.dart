@@ -1,4 +1,3 @@
-
 part of 'shop_bloc.dart';
 
 @immutable
@@ -48,4 +47,35 @@ class ShopError extends ShopState {
   final String message;
 
   ShopError(this.message);
+}
+
+// Search States
+@immutable
+class SearchLoading extends ShopState {
+  SearchLoading();
+}
+
+@immutable
+class SearchResultsLoaded extends ShopState {
+  final List<SearchResultModel> searchResults;
+  final MetaModel meta;
+  final String query;
+
+  SearchResultsLoaded({
+    required this.searchResults,
+    required this.meta,
+    required this.query,
+  });
+}
+
+@immutable
+class SearchError extends ShopState {
+  final String message;
+
+  SearchError(this.message);
+}
+
+@immutable
+class SearchCleared extends ShopState {
+  SearchCleared();
 }

@@ -1,6 +1,7 @@
-
 import 'package:customer_app/features/home/data/models/category_model.dart';
+import 'package:customer_app/features/home/data/models/search_model.dart';
 import 'package:customer_app/features/home/data/models/shop_model.dart';
+import 'package:customer_app/features/home/domain/usecase/search_usecase.dart';
 import 'package:customer_app/features/home/domain/usecase/shop_usecase.dart';
 import 'package:flutter/foundation.dart' show immutable;
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -11,13 +12,17 @@ part 'shop_state.dart';
 
 class ShopBloc extends Bloc<ShopEvent, ShopState> {
   final GetShopsByLocationUseCase getShopsByLocation;
+  final GetAutocompleteResultsUseCase getAutocompleteResults;
 
   ShopBloc({
     required this.getShopsByLocation,
+    required this.getAutocompleteResults,
   }) : super(ShopInitial()) {
     on<GetShopsByLocationEvent>(_onGetShopsByLocation);
     on<LoadMoreShopsEvent>(_onLoadMoreShops);
     on<RefreshShopsEvent>(_onRefreshShops);
+    on<SearchAutocompleteEvent>(_onSearchAutocomplete);
+    on<ClearSearchEvent>(_onClearSearch);
   }
 
   Future<void> _onGetShopsByLocation(
@@ -92,5 +97,39 @@ class ShopBloc extends Bloc<ShopEvent, ShopState> {
       )),
       failure: (failure) => emit(ShopError(failure.message)),
     );
+  }
+
+  Future<void> _onSearchAutocomplete(
+    SearchAutocompleteEvent event,
+    Emitter<ShopState> emit,
+  ) async {
+    if (event.query.isEmpty) {
+      emit(SearchCleared());
+      return;
+    }
+
+    emit(SearchLoading());
+
+    final result = await getAutocompleteResults(GetAutocompleteResultsParams(
+      query: event.query,
+      lat: event.lat,
+      lng: event.lng,
+    ));
+
+    result.when(
+      success: (data) => emit(SearchResultsLoaded(
+        searchResults: data.data,
+        meta: data.meta,
+        query: event.query,
+      )),
+      failure: (failure) => emit(SearchError(failure.message)),
+    );
+  }
+
+  Future<void> _onClearSearch(
+    ClearSearchEvent event,
+    Emitter<ShopState> emit,
+  ) async {
+    emit(SearchCleared());
   }
 }

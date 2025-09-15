@@ -2,6 +2,7 @@ import 'package:customer_app/constants/app_images.dart';
 import 'package:customer_app/core/services/auth_preference_service.dart';
 import 'package:customer_app/features/auth/data/models/user_model.dart';
 import 'package:customer_app/features/home/domain/usecase/category_usecase.dart';
+import 'package:customer_app/features/home/domain/usecase/search_usecase.dart';
 import 'package:customer_app/features/home/domain/usecase/shop_usecase.dart';
 import 'package:customer_app/features/home/presentation/bloc/home_bloc.dart';
 import 'package:customer_app/features/home/presentation/bloc/shop/shop_bloc.dart';
@@ -41,7 +42,7 @@ class _HomeContentState extends State<HomeContent> {
       }
     } catch (e) {
       setState(() {
-        _currentLat = 12.8738; 
+        _currentLat = 12.8738;
         _currentLng = 80.0784;
       });
     }
@@ -86,9 +87,12 @@ class _HomeContentState extends State<HomeContent> {
             BlocProvider(
               create: (_) {
                 final bloc = ShopBloc(
-                  getShopsByLocation: serviceLocator<GetShopsByLocationUseCase>(),
+                  getShopsByLocation:
+                      serviceLocator<GetShopsByLocationUseCase>(),
+                  getAutocompleteResults:
+                      serviceLocator<GetAutocompleteResultsUseCase>(),
                 );
-                
+
                 if (_currentLat != null && _currentLng != null) {
                   bloc.add(GetShopsByLocationEvent(
                     limit: 10,
@@ -97,13 +101,14 @@ class _HomeContentState extends State<HomeContent> {
                     cursor: null,
                   ));
                 }
-                
+
                 return bloc;
               },
             ),
           ],
           child: Scaffold(
-            backgroundColor: colorScheme.surfaceContainerHighest.withOpacity(0.3),
+            backgroundColor:
+                colorScheme.surfaceContainerHighest.withOpacity(0.3),
             body: CustomScrollView(
               slivers: [
                 HomeContentWidgets.searchAndLocation(user.location!, context),
@@ -134,8 +139,7 @@ class _HomeContentState extends State<HomeContent> {
             HomeContentSubwidget.homeCarousel(context),
             HomeContentSubwidget.tabContent(context),
             const SizedBox(height: 30),
-            
-            // Recommended section (static for now)
+
             Container(
               alignment: Alignment.centerLeft,
               margin: const EdgeInsets.symmetric(horizontal: 20),
@@ -150,8 +154,7 @@ class _HomeContentState extends State<HomeContent> {
             ),
             HomeContentSubwidget.recommendedWidgets(context),
             const SizedBox(height: 20),
-            
-            // Nearby Shops section (dynamic)
+
             Container(
               alignment: Alignment.centerLeft,
               margin: const EdgeInsets.symmetric(horizontal: 20),
@@ -173,12 +176,12 @@ class _HomeContentState extends State<HomeContent> {
                           onPressed: () {
                             if (_currentLat != null && _currentLng != null) {
                               context.read<ShopBloc>().add(
-                                RefreshShopsEvent(
-                                  limit: 10,
-                                  lat: _currentLat!,
-                                  lng: _currentLng!,
-                                ),
-                              );
+                                    RefreshShopsEvent(
+                                      limit: 10,
+                                      lat: _currentLat!,
+                                      lng: _currentLng!,
+                                    ),
+                                  );
                             }
                           },
                           icon: const Icon(Icons.refresh, size: 16),
@@ -192,7 +195,7 @@ class _HomeContentState extends State<HomeContent> {
               ),
             ),
             const SizedBox(height: 10),
-            
+
             // Shop list
             BlocBuilder<ShopBloc, ShopState>(
               builder: (context, state) {
@@ -210,9 +213,9 @@ class _HomeContentState extends State<HomeContent> {
                     }
                     return Column(
                       children: [
-                        ...state.shops.map((shop) => 
-                          HomeContentSubwidget.buildShopCard(context, shop: shop)
-                        ),
+                        ...state.shops.map((shop) =>
+                            HomeContentSubwidget.buildShopCard(context,
+                                shop: shop)),
                         if (state.error != null)
                           Container(
                             margin: const EdgeInsets.all(16),
@@ -223,13 +226,22 @@ class _HomeContentState extends State<HomeContent> {
                             ),
                             child: Text(
                               'Error loading more shops: ${state.error}',
-                              style: TextStyle(color: colorScheme.onErrorContainer),
+                              style: TextStyle(
+                                  color: colorScheme.onErrorContainer),
                             ),
                           ),
                       ],
                     );
                   case ShopError():
                     return _buildErrorState(context, state.message);
+                  case SearchLoading():
+                    throw UnimplementedError();
+                  case SearchResultsLoaded():
+                    throw UnimplementedError();
+                  case SearchError():
+                    throw UnimplementedError();
+                  case SearchCleared():
+                    throw UnimplementedError();
                 }
               },
             ),
@@ -252,14 +264,15 @@ class _HomeContentState extends State<HomeContent> {
                       : state.meta.hasMore
                           ? ElevatedButton(
                               onPressed: () {
-                                if (_currentLat != null && _currentLng != null) {
+                                if (_currentLat != null &&
+                                    _currentLng != null) {
                                   context.read<ShopBloc>().add(
-                                    LoadMoreShopsEvent(
-                                      limit: 10,
-                                      lat: _currentLat!,
-                                      lng: _currentLng!,
-                                    ),
-                                  );
+                                        LoadMoreShopsEvent(
+                                          limit: 10,
+                                          lat: _currentLat!,
+                                          lng: _currentLng!,
+                                        ),
+                                      );
                                 }
                               },
                               child: const Text("Load more shops"),
@@ -267,7 +280,9 @@ class _HomeContentState extends State<HomeContent> {
                           : Text(
                               "No more shops to load",
                               style: TextStyle(
-                                color: Theme.of(context).colorScheme.onSurfaceVariant,
+                                color: Theme.of(context)
+                                    .colorScheme
+                                    .onSurfaceVariant,
                               ),
                             )
                   : const SizedBox.shrink(),
@@ -280,7 +295,7 @@ class _HomeContentState extends State<HomeContent> {
 
   Widget _buildLocationLoadingState(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
-    
+
     return Container(
       margin: const EdgeInsets.all(20),
       padding: const EdgeInsets.all(20),
@@ -317,7 +332,7 @@ class _HomeContentState extends State<HomeContent> {
 
   Widget _buildEmptyState(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
-    
+
     return Container(
       margin: const EdgeInsets.all(20),
       padding: const EdgeInsets.all(20),
@@ -352,12 +367,12 @@ class _HomeContentState extends State<HomeContent> {
             onPressed: () {
               if (_currentLat != null && _currentLng != null) {
                 context.read<ShopBloc>().add(
-                  RefreshShopsEvent(
-                    limit: 10,
-                    lat: _currentLat!,
-                    lng: _currentLng!,
-                  ),
-                );
+                      RefreshShopsEvent(
+                        limit: 10,
+                        lat: _currentLat!,
+                        lng: _currentLng!,
+                      ),
+                    );
               }
             },
             icon: const Icon(Icons.refresh),
@@ -370,7 +385,7 @@ class _HomeContentState extends State<HomeContent> {
 
   Widget _buildErrorState(BuildContext context, String message) {
     final colorScheme = Theme.of(context).colorScheme;
-    
+
     return Container(
       margin: const EdgeInsets.all(20),
       padding: const EdgeInsets.all(20),
@@ -405,12 +420,12 @@ class _HomeContentState extends State<HomeContent> {
             onPressed: () {
               if (_currentLat != null && _currentLng != null) {
                 context.read<ShopBloc>().add(
-                  RefreshShopsEvent(
-                    limit: 10,
-                    lat: _currentLat!,
-                    lng: _currentLng!,
-                  ),
-                );
+                      RefreshShopsEvent(
+                        limit: 10,
+                        lat: _currentLat!,
+                        lng: _currentLng!,
+                      ),
+                    );
               }
             },
             child: const Text('Retry'),

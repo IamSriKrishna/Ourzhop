@@ -1,6 +1,7 @@
 // ignore_for_file: deprecated_member_use
 
 import 'package:customer_app/constants/app_route_constants.dart';
+import 'package:customer_app/features/home/presentation/bloc/shop/shop_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -10,6 +11,8 @@ class SearchResult {
   final String type;
   final String imageUrl;
   final String? subtitle;
+  final double? similarityScore;
+  final double? distanceKm;
 
   SearchResult({
     required this.id,
@@ -17,13 +20,19 @@ class SearchResult {
     required this.type,
     required this.imageUrl,
     this.subtitle,
+    this.similarityScore,
+    this.distanceKm,
   });
 }
 
 class SearchScreenWidgets {
   SearchScreenWidgets._();
 
-  static Widget searchHeader(BuildContext context) {
+  static Widget searchHeader(
+    BuildContext context, {
+    TextEditingController? controller,
+    Function(String)? onChanged,
+  }) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
 
@@ -45,10 +54,12 @@ class SearchScreenWidgets {
                 minWidth: 40,
                 minHeight: 40,
               ),
-              decoration:
-                  BoxDecoration(color: Colors.white, shape: BoxShape.circle),
-              child: Padding(
-                padding: const EdgeInsets.only(left: 8.0),
+              decoration: const BoxDecoration(
+                color: Colors.white,
+                shape: BoxShape.circle,
+              ),
+              child: const Padding(
+                padding: EdgeInsets.only(left: 8.0),
                 child: Icon(
                   Icons.arrow_back_ios,
                   color: Colors.black,
@@ -73,12 +84,13 @@ class SearchScreenWidgets {
                 ],
               ),
               child: TextField(
+                controller: controller,
                 autofocus: true,
-                onChanged: (value) {
+                onChanged: onChanged ?? (value) {
                   debugPrint('Search query: $value');
                 },
                 decoration: InputDecoration(
-                  hintText: 'Item name',
+                  hintText: 'Search shops, items...',
                   hintStyle: TextStyle(
                     color: Colors.grey[600],
                     fontSize: 16,
@@ -92,14 +104,29 @@ class SearchScreenWidgets {
                       size: 20,
                     ),
                   ),
-                  suffixIcon: Container(
-                    padding: const EdgeInsets.all(12),
-                    child: const Icon(
-                      Icons.mic,
-                      color: Colors.black54,
-                      size: 20,
-                    ),
-                  ),
+                  suffixIcon: controller != null && controller.text.isNotEmpty
+                      ? GestureDetector(
+                          onTap: () {
+                            controller.clear();
+                            onChanged?.call('');
+                          },
+                          child: Container(
+                            padding: const EdgeInsets.all(12),
+                            child: const Icon(
+                              Icons.clear,
+                              color: Colors.black54,
+                              size: 20,
+                            ),
+                          ),
+                        )
+                      : Container(
+                          padding: const EdgeInsets.all(12),
+                          child: const Icon(
+                            Icons.mic,
+                            color: Colors.black54,
+                            size: 20,
+                          ),
+                        ),
                   border: InputBorder.none,
                   enabledBorder: OutlineInputBorder(
                     borderSide: const BorderSide(color: Colors.transparent),
@@ -128,98 +155,212 @@ class SearchScreenWidgets {
     );
   }
 
-  static Widget searchResults(BuildContext context, bool ishome) {
+  static Widget searchResults(
+    BuildContext context, 
+    bool isHome,
+    ShopState state,
+  ) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
-
-    final List<SearchResult> results = [
-      SearchResult(
-        id: '1',
-        name: 'Item name',
-        type: 'Product',
-        imageUrl: '🍎',
-      ),
-      SearchResult(
-        id: '2',
-        name: 'Item name',
-        type: 'Product',
-        imageUrl: '🥜',
-      ),
-      SearchResult(
-        id: '3',
-        name: 'Store name',
-        type: 'Store',
-        imageUrl: '🏪',
-      ),
-      SearchResult(
-        id: '4',
-        name: 'Item name',
-        type: 'Product',
-        imageUrl: '🍒',
-      ),
-      SearchResult(
-        id: '5',
-        name: 'Item name',
-        type: 'Product',
-        imageUrl: '🧀',
-      ),
-      SearchResult(
-        id: '6',
-        name: 'Store name',
-        type: 'Store',
-        imageUrl: '🏪',
-      ),
-      SearchResult(
-        id: '7',
-        name: 'Store name',
-        type: 'Store',
-        imageUrl: '🏪',
-      ),
-      SearchResult(
-        id: '8',
-        name: 'Item name',
-        type: 'Product',
-        imageUrl: '🥤',
-      ),
-    ];
 
     return Expanded(
       child: Container(
         color: colorScheme.surface,
-        child: results.isEmpty
-            ? const Center(
-                child: Text(
-                  'No results found',
-                  style: TextStyle(
-                    fontSize: 16,
-                    color: Colors.grey,
-                  ),
-                ),
-              )
-            : ListView.builder(
-                padding: EdgeInsets.zero,
-                itemCount: results.length,
-                itemBuilder: (context, index) {
-                  final result = results[index];
-                  return _buildSearchResultItem(result, context,
-                      isHome: ishome);
-                },
-              ),
+        child: _buildSearchContent(context, isHome, state),
       ),
     );
   }
 
+  static Widget _buildSearchContent(
+    BuildContext context,
+    bool isHome,
+    ShopState state,
+  ) {
+    if (state is SearchLoading) {
+      return _buildLoadingState(context);
+    } else if (state is SearchResultsLoaded) {
+      if (state.searchResults.isEmpty) {
+        return _buildEmptyState(context, 'No results found for "${state.query}"');
+      }
+      return _buildResultsList(context, isHome, state.searchResults);
+    } else if (state is SearchError) {
+      return _buildErrorState(context, state.message);
+    } else if (state is SearchCleared || state is ShopInitial) {
+      return _buildInitialState(context);
+    } else {
+      return _buildInitialState(context);
+    }
+  }
+
+  static Widget _buildLoadingState(BuildContext context) {
+    return ListView.builder(
+      padding: EdgeInsets.zero,
+      itemCount: 8, 
+      itemBuilder: (context, index) => buildShimmerResultItem(context),
+    );
+  }
+
+  static Widget _buildResultsList(
+    BuildContext context,
+    bool isHome,
+    List<dynamic> results,
+  ) {
+    return ListView.builder(
+      padding: EdgeInsets.zero,
+      itemCount: results.length,
+      itemBuilder: (context, index) {
+        final result = results[index];
+        return _buildSearchResultItem(
+          SearchResult(
+            id: result.id,
+            name: result.name,
+            type: result.type,
+            imageUrl: _getImageForType(result.type),
+            subtitle: result.description.isNotEmpty 
+                ? result.description 
+                : '${result.distanceKm.toStringAsFixed(1)} km away',
+            similarityScore: result.similarityScore,
+            distanceKm: result.distanceKm,
+          ),
+          context,
+          isHome: isHome,
+        );
+      },
+    );
+  }
+
+  static Widget _buildEmptyState(BuildContext context, String message) {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(
+            Icons.search_off,
+            size: 64,
+            color: Colors.grey[400],
+          ),
+          const SizedBox(height: 16),
+          Text(
+            message,
+            style: const TextStyle(
+              fontSize: 16,
+              color: Colors.grey,
+            ),
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: 8),
+          Text(
+            'Try different keywords or check your spelling',
+            style: TextStyle(
+              fontSize: 14,
+              color: Colors.grey[600],
+            ),
+            textAlign: TextAlign.center,
+          ),
+        ],
+      ),
+    );
+  }
+
+  static Widget _buildErrorState(BuildContext context, String message) {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(
+            Icons.error_outline,
+            size: 64,
+            color: Colors.red[300],
+          ),
+          const SizedBox(height: 16),
+          Text(
+            'Something went wrong',
+            style: const TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            message,
+            style: TextStyle(
+              fontSize: 14,
+              color: Colors.grey[600],
+            ),
+            textAlign: TextAlign.center,
+          ),
+        ],
+      ),
+    );
+  }
+
+  static Widget _buildInitialState(BuildContext context) {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(
+            Icons.search,
+            size: 64,
+            color: Colors.grey[400],
+          ),
+          const SizedBox(height: 16),
+          Text(
+            'Search for shops and items',
+            style: TextStyle(
+              fontSize: 16,
+              color: Colors.grey[600],
+            ),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            'Start typing to see results',
+            style: TextStyle(
+              fontSize: 14,
+              color: Colors.grey[500],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  static String _getImageForType(String type) {
+    switch (type.toLowerCase()) {
+      case 'shop':
+        return '🏪';
+      case 'product':
+        return '📦';
+      case 'food':
+        return '🍎';
+      case 'restaurant':
+        return '🍽️';
+      case 'grocery':
+        return '🛒';
+      default:
+        return '🏪';
+    }
+  }
+
   static Widget _buildSearchResultItem(
-      SearchResult result, BuildContext context,
-      {required bool isHome}) {
+    SearchResult result, 
+    BuildContext context, {
+    required bool isHome,
+  }) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
 
     return InkWell(
       onTap: () {
         isHome
-            ? context.goNamed(AppRoutes.storeListScreen)
-            : context.goNamed(AppRoutes.categoryStoreListScreen);
+            ? context.goNamed(
+                AppRoutes.storeListScreen,
+                extra: {'searchResult': result},
+              )
+            : context.goNamed(
+                AppRoutes.categoryStoreListScreen,
+                extra: {'searchResult': result},
+              );
       },
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
@@ -261,13 +402,38 @@ class SearchScreenWidgets {
                     ),
                   ),
                   const SizedBox(height: 2),
-                  Text(
-                    result.type,
-                    style: TextStyle(
-                      fontSize: 14,
-                      color: colorScheme.onSurface.withOpacity(0.6),
-                      fontWeight: FontWeight.w400,
-                    ),
+                  Row(
+                    children: [
+                      Text(
+                        result.type,
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: colorScheme.onSurface.withOpacity(0.6),
+                          fontWeight: FontWeight.w400,
+                        ),
+                      ),
+                      if (result.similarityScore != null) ...[
+                        const SizedBox(width: 8),
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 6,
+                            vertical: 2,
+                          ),
+                          decoration: BoxDecoration(
+                            color: colorScheme.primaryContainer,
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: Text(
+                            '${(result.similarityScore! * 100).toInt()}% match',
+                            style: TextStyle(
+                              fontSize: 10,
+                              color: colorScheme.onPrimaryContainer,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ],
                   ),
                   if (result.subtitle != null) ...[
                     const SizedBox(height: 2),
@@ -282,6 +448,12 @@ class SearchScreenWidgets {
                 ],
               ),
             ),
+            if (result.distanceKm != null)
+              Icon(
+                Icons.location_on,
+                size: 16,
+                color: colorScheme.onSurface.withOpacity(0.4),
+              ),
           ],
         ),
       ),

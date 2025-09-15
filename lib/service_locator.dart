@@ -37,6 +37,12 @@ import 'package:customer_app/features/home/data/datasources/shop_remote_data_sou
 import 'package:customer_app/features/home/domain/repositories/shop_repository.dart';
 import 'package:customer_app/features/home/domain/usecase/shop_usecase.dart';
 
+// Search imports:
+import 'package:customer_app/features/home/data/datasources/search_remote_data_source.dart';
+import 'package:customer_app/features/home/data/repositories/search_repo_impl.dart';
+import 'package:customer_app/features/home/domain/repositories/search_repository.dart';
+import 'package:customer_app/features/home/domain/usecase/search_usecase.dart';
+
 final GetIt serviceLocator = GetIt.instance;
 
 Future<void> initServiceLocator() async {
@@ -59,6 +65,9 @@ Future<void> initServiceLocator() async {
 
   // Shop Features
   _registerShopFeatures();
+
+  // Search Features
+  _registerSearchFeatures();
 
   // Error handling
   // _registerErrorHandler();
@@ -166,6 +175,7 @@ void _registerShopFeatures() {
   serviceLocator.registerFactory(
     () => ShopBloc(
       getShopsByLocation: serviceLocator<GetShopsByLocationUseCase>(),
+      getAutocompleteResults: serviceLocator<GetAutocompleteResultsUseCase>(),
     ),
   );
 
@@ -182,6 +192,23 @@ void _registerShopFeatures() {
   // Data Sources
   serviceLocator.registerLazySingleton<ShopRemoteDataSource>(
     () => ShopRemoteDataSourceImpl(),
+  );
+}
+
+void _registerSearchFeatures() {
+  // Use Cases
+  serviceLocator.registerLazySingleton(
+    () => GetAutocompleteResultsUseCase(serviceLocator()),
+  );
+
+  // Repository
+  serviceLocator.registerLazySingleton<SearchRepository>(
+    () => SearchRepositoryImpl(remoteDataSource: serviceLocator()),
+  );
+
+  // Data Sources
+  serviceLocator.registerLazySingleton<SearchRemoteDataSource>(
+    () => SearchRemoteDataSourceImpl(),
   );
 }
 

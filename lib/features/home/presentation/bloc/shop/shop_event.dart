@@ -1,4 +1,3 @@
-
 part of 'shop_bloc.dart';
 
 @immutable
@@ -43,4 +42,22 @@ class RefreshShopsEvent extends ShopEvent {
     required this.lat,
     required this.lng,
   });
+}
+
+@immutable
+class SearchAutocompleteEvent extends ShopEvent {
+  final String query;
+  final double lat;
+  final double lng;
+
+  SearchAutocompleteEvent({
+    required this.query,
+    required this.lat,
+    required this.lng,
+  });
+}
+
+@immutable
+class ClearSearchEvent extends ShopEvent {
+  ClearSearchEvent();
 }

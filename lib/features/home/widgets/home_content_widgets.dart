@@ -294,9 +294,9 @@ class HomeContentWidgets {
                   case ShopLoaded():
                     return Column(
                       children: [
-                        ...state.shops.map((shop) => 
-                          HomeContentSubwidget.buildShopCard(context, shop: shop)
-                        ),
+                        ...state.shops.map((shop) =>
+                            HomeContentSubwidget.buildShopCard(context,
+                                shop: shop)),
                         if (state.error != null)
                           Container(
                             margin: const EdgeInsets.all(16),
@@ -307,7 +307,8 @@ class HomeContentWidgets {
                             ),
                             child: Text(
                               'Error loading more shops: ${state.error}',
-                              style: TextStyle(color: colorScheme.onErrorContainer),
+                              style: TextStyle(
+                                  color: colorScheme.onErrorContainer),
                             ),
                           ),
                       ],
@@ -339,24 +340,34 @@ class HomeContentWidgets {
                           const SizedBox(height: 4),
                           Text(
                             state.message,
-                            style: TextStyle(color: colorScheme.onErrorContainer),
+                            style:
+                                TextStyle(color: colorScheme.onErrorContainer),
                           ),
                           const SizedBox(height: 16),
                           ElevatedButton(
                             onPressed: () {
                               context.read<ShopBloc>().add(
-                                RefreshShopsEvent(
-                                  limit: 10,
-                                  lat: 12.8738, // Replace with actual coordinates
-                                  lng: 80.0784,
-                                ),
-                              );
+                                    RefreshShopsEvent(
+                                      limit: 10,
+                                      lat:
+                                          12.8738, // Replace with actual coordinates
+                                      lng: 80.0784,
+                                    ),
+                                  );
                             },
                             child: const Text('Retry'),
                           ),
                         ],
                       ),
                     );
+                  case SearchLoading():
+                    throw UnimplementedError();
+                  case SearchResultsLoaded():
+                    throw UnimplementedError();
+                  case SearchError():
+                    throw UnimplementedError();
+                  case SearchCleared():
+                    throw UnimplementedError();
                 }
               },
             ),

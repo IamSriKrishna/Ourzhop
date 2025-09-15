@@ -273,14 +273,12 @@ class HomeContentSubwidget {
     );
   }
 
-  // Updated buildStoreCard method that can accept optional shop data
   static Widget buildShopCard(BuildContext context, {ShopModel? shop}) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
 
-    // Use shop data if provided, otherwise use default values
     final shopName = shop?.name ?? "Store name";
-    final shopImage = shop?.primaryImageUrl ?? 
+    final shopImage = shop?.primaryImageUrl ??
         "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fwww.tastingtable.com%2Fimg%2Fgallery%2Fthe-high-tech-1940s-grocery-cart-innovation-that-never-took-off%2Fl-intro-1673549255.jpg&f=1&nofb=1&ipt=9be9defe43553b5e548832668f422fef0d5d7b57152b04bb529226edbf179abb";
     final rating = shop?.avgRating ?? 4.5;
     final shopTags = shop?.shopTags.join(' • ') ?? "Grocery • Bakery • Fresh";
@@ -313,9 +311,9 @@ class HomeContentSubwidget {
         borderRadius: BorderRadius.circular(12),
         child: Column(
           children: [
-            // Shop Image
             ClipRRect(
-              borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
+              borderRadius:
+                  const BorderRadius.vertical(top: Radius.circular(12)),
               child: Stack(
                 children: [
                   Image.network(
@@ -341,7 +339,8 @@ class HomeContentSubwidget {
                     top: 8,
                     left: 8,
                     child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 8, vertical: 4),
                       decoration: BoxDecoration(
                         color: isOnline ? Colors.green : Colors.red,
                         borderRadius: BorderRadius.circular(12),
@@ -381,7 +380,8 @@ class HomeContentSubwidget {
                         ),
                       ),
                       Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 8, vertical: 4),
                         decoration: BoxDecoration(
                           color: Colors.green,
                           borderRadius: BorderRadius.circular(12),
@@ -440,7 +440,8 @@ class HomeContentSubwidget {
                             Container(
                               padding: const EdgeInsets.all(4),
                               decoration: BoxDecoration(
-                                color: colorScheme.surfaceContainerHighest.withOpacity(0.5),
+                                color: colorScheme.surfaceContainerHighest
+                                    .withOpacity(0.5),
                                 borderRadius: BorderRadius.circular(4),
                               ),
                               child: Icon(
@@ -463,7 +464,8 @@ class HomeContentSubwidget {
                         Container(
                           padding: const EdgeInsets.all(4),
                           decoration: BoxDecoration(
-                            color: colorScheme.surfaceContainerHighest.withOpacity(0.5),
+                            color: colorScheme.surfaceContainerHighest
+                                .withOpacity(0.5),
                             borderRadius: BorderRadius.circular(4),
                           ),
                           child: Icon(
@@ -490,7 +492,8 @@ class HomeContentSubwidget {
                         ),
                       ] else ...[
                         Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 8, vertical: 4),
                           decoration: BoxDecoration(
                             color: colorScheme.errorContainer,
                             borderRadius: BorderRadius.circular(8),
@@ -522,7 +525,6 @@ class HomeContentSubwidget {
       ),
     );
   }
-
 
   static final List<String> _carouselImages = [
     'https://images.unsplash.com/photo-1542838132-92c53300491e?w=800&h=400&fit=crop',
@@ -692,25 +694,24 @@ class HomeContentSubwidget {
       ),
     );
   }
-static String formatLocation(String location) {
-  final parts = location.split(',').map((e) => e.trim()).toList();
 
-  if (parts.length <= 3) {
-    return location.trim();
-  } else {
-    String first = parts[0];
-    String second = parts[1];
+  static String formatLocation(String location) {
+    final parts = location.split(',').map((e) => e.trim()).toList();
 
-    if (first.toLowerCase() == second.toLowerCase()) {
-      if (parts.length > 2) {
-        second = parts[2];
+    if (parts.length <= 3) {
+      return location.trim();
+    } else {
+      String first = parts[0];
+      String second = parts[1];
+
+      if (first.toLowerCase() == second.toLowerCase()) {
+        if (parts.length > 2) {
+          second = parts[2];
+        }
       }
+
+      final last = parts.last;
+      return "$first, $second ... $last";
     }
-
-    final last = parts.last;
-    return "$first, $second ... $last";
   }
-}
-
-
 }
