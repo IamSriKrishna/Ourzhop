@@ -5,6 +5,8 @@ import 'package:customer_app/features/auth/data/repositories/location_repositori
 import 'package:customer_app/features/auth/domain/repositories/location_repository.dart';
 import 'package:customer_app/features/auth/domain/usecases/location_usercase.dart';
 import 'package:customer_app/features/auth/presentation/bloc/location/location_bloc.dart';
+import 'package:customer_app/features/home/data/repositories/shop_repo_impl.dart';
+import 'package:customer_app/features/home/presentation/bloc/shop/shop_bloc.dart';
 import 'package:dio/dio.dart';
 import 'package:get_it/get_it.dart';
 
@@ -30,6 +32,11 @@ import 'package:customer_app/features/home/domain/repositories/category_reposito
 import 'package:customer_app/features/home/domain/usecase/category_usecase.dart';
 import 'package:customer_app/features/home/presentation/bloc/home_bloc.dart';
 
+// Shop imports:
+import 'package:customer_app/features/home/data/datasources/shop_remote_data_source.dart';
+import 'package:customer_app/features/home/domain/repositories/shop_repository.dart';
+import 'package:customer_app/features/home/domain/usecase/shop_usecase.dart';
+
 final GetIt serviceLocator = GetIt.instance;
 
 Future<void> initServiceLocator() async {
@@ -38,7 +45,7 @@ Future<void> initServiceLocator() async {
 
   // Localization handling
   _registerLocalization();
-  
+
   _registerLocationFeatures();
 
   // Connectivity handling
@@ -49,6 +56,9 @@ Future<void> initServiceLocator() async {
 
   // Category Features
   _registerCategoryFeatures();
+
+  // Shop Features
+  _registerShopFeatures();
 
   // Error handling
   // _registerErrorHandler();
@@ -148,6 +158,30 @@ void _registerCategoryFeatures() {
   // Data Sources
   serviceLocator.registerLazySingleton<CategoryRemoteDataSource>(
     () => CategoryRemoteDataSourceImpl(),
+  );
+}
+
+void _registerShopFeatures() {
+  // Bloc
+  serviceLocator.registerFactory(
+    () => ShopBloc(
+      getShopsByLocation: serviceLocator<GetShopsByLocationUseCase>(),
+    ),
+  );
+
+  // Use Cases
+  serviceLocator.registerLazySingleton(
+    () => GetShopsByLocationUseCase(serviceLocator()),
+  );
+
+  // Repository
+  serviceLocator.registerLazySingleton<ShopRepository>(
+    () => ShopRepositoryImpl(remoteDataSource: serviceLocator()),
+  );
+
+  // Data Sources
+  serviceLocator.registerLazySingleton<ShopRemoteDataSource>(
+    () => ShopRemoteDataSourceImpl(),
   );
 }
 

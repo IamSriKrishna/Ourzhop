@@ -3,6 +3,7 @@
 import 'package:customer_app/constants/app_route_constants.dart';
 import 'package:customer_app/core/app_extension.dart';
 import 'package:customer_app/features/home/presentation/bloc/home_bloc.dart';
+import 'package:customer_app/features/home/presentation/bloc/shop/shop_bloc.dart';
 import 'package:customer_app/features/home/widgets/home_content_subwidget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -115,7 +116,7 @@ class HomeContentWidgets {
                   children: [
                     Expanded(
                       child: Text(
-                        location.toCapital,
+                        HomeContentSubwidget.formatLocation(location.toCapital),
                         maxLines: 4,
                         textAlign: TextAlign.center,
                         overflow: TextOverflow.ellipsis,
@@ -266,8 +267,99 @@ class HomeContentWidgets {
             ),
             HomeContentSubwidget.recommendedWidgets(context),
             const SizedBox(height: 20),
-            ...List.generate(
-                5, (index) => HomeContentSubwidget.buildStoreCard(context)),
+            Container(
+              alignment: Alignment.centerLeft,
+              margin: const EdgeInsets.symmetric(horizontal: 20),
+              child: Text(
+                'Nearby Shops',
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: colorScheme.onSurface,
+                ),
+              ),
+            ),
+            const SizedBox(height: 10),
+            // Replace the static list with dynamic shop data
+            BlocBuilder<ShopBloc, ShopState>(
+              builder: (context, state) {
+                switch (state) {
+                  case ShopInitial():
+                    return const SizedBox.shrink();
+                  case ShopLoading():
+                    return const Padding(
+                      padding: EdgeInsets.all(20.0),
+                      child: CircularProgressIndicator(),
+                    );
+                  case ShopLoaded():
+                    return Column(
+                      children: [
+                        ...state.shops.map((shop) => 
+                          HomeContentSubwidget.buildShopCard(context, shop: shop)
+                        ),
+                        if (state.error != null)
+                          Container(
+                            margin: const EdgeInsets.all(16),
+                            padding: const EdgeInsets.all(12),
+                            decoration: BoxDecoration(
+                              color: colorScheme.errorContainer,
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: Text(
+                              'Error loading more shops: ${state.error}',
+                              style: TextStyle(color: colorScheme.onErrorContainer),
+                            ),
+                          ),
+                      ],
+                    );
+                  case ShopError():
+                    return Container(
+                      margin: const EdgeInsets.all(20),
+                      padding: const EdgeInsets.all(16),
+                      decoration: BoxDecoration(
+                        color: colorScheme.errorContainer,
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Column(
+                        children: [
+                          Icon(
+                            Icons.error_outline,
+                            color: colorScheme.onErrorContainer,
+                            size: 48,
+                          ),
+                          const SizedBox(height: 8),
+                          Text(
+                            'Failed to load shops',
+                            style: TextStyle(
+                              color: colorScheme.onErrorContainer,
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            state.message,
+                            style: TextStyle(color: colorScheme.onErrorContainer),
+                          ),
+                          const SizedBox(height: 16),
+                          ElevatedButton(
+                            onPressed: () {
+                              context.read<ShopBloc>().add(
+                                RefreshShopsEvent(
+                                  limit: 10,
+                                  lat: 12.8738, // Replace with actual coordinates
+                                  lng: 80.0784,
+                                ),
+                              );
+                            },
+                            child: const Text('Retry'),
+                          ),
+                        ],
+                      ),
+                    );
+                }
+              },
+            ),
           ],
         ),
       ),
