@@ -13,7 +13,7 @@ import 'package:shimmer/shimmer.dart';
 class HomeContentSubwidget {
   const HomeContentSubwidget._();
   static Widget buildStickyCategory(
-      String label, String img, bool isSelected, BuildContext context) {
+      String label, String img, bool isSelected, BuildContext context,bool isAll) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
 
@@ -37,7 +37,7 @@ class HomeContentSubwidget {
               ),
             ],
           ),
-          child: Image.network(
+          child:isAll?Image.asset(img): Image.network(
             img,
             errorBuilder: (context, url, error) => Icon(
               Icons.error,

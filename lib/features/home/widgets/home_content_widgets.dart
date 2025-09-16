@@ -1,5 +1,6 @@
 // ignore_for_file: deprecated_member_use
 
+import 'package:customer_app/constants/app_icons.dart';
 import 'package:customer_app/constants/app_route_constants.dart';
 import 'package:customer_app/core/app_extension.dart';
 import 'package:customer_app/features/home/presentation/bloc/home_bloc.dart';
@@ -216,17 +217,31 @@ class HomeContentWidgets {
                       scrollDirection: Axis.horizontal,
                       padding: const EdgeInsets.symmetric(horizontal: 12),
                       child: Row(
-                        children: state.categories.map((category) {
-                          return Padding(
+                        children: [
+                          Padding(
                             padding: const EdgeInsets.symmetric(horizontal: 6),
                             child: HomeContentSubwidget.buildStickyCategory(
-                              category.name,
-                              category.iconUrl,
-                              false,
+                              "All",
+                              AppIcons.store,
+                              true,
                               context,
+                              true
                             ),
-                          );
-                        }).toList(),
+                          ),
+                          ...state.categories.map((category) {
+                            return Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 6),
+                              child: HomeContentSubwidget.buildStickyCategory(
+                                category.name,
+                                category.iconUrl,
+                                false,
+                                context,
+                                false
+                              ),
+                            );
+                          })
+                        ],
                       ),
                     ),
                   ),

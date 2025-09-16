@@ -140,20 +140,20 @@ class _HomeContentState extends State<HomeContent> {
             HomeContentSubwidget.tabContent(context),
             const SizedBox(height: 30),
 
-            Container(
-              alignment: Alignment.centerLeft,
-              margin: const EdgeInsets.symmetric(horizontal: 20),
-              child: Text(
-                'Recommended',
-                style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                  color: colorScheme.onSurface,
-                ),
-              ),
-            ),
-            HomeContentSubwidget.recommendedWidgets(context),
-            const SizedBox(height: 20),
+            // Container(
+            //   alignment: Alignment.centerLeft,
+            //   margin: const EdgeInsets.symmetric(horizontal: 20),
+            //   child: Text(
+            //     'Recommended',
+            //     style: TextStyle(
+            //       fontSize: 20,
+            //       fontWeight: FontWeight.bold,
+            //       color: colorScheme.onSurface,
+            //     ),
+            //   ),
+            // ),
+            // HomeContentSubwidget.recommendedWidgets(context),
+            // const SizedBox(height: 20),
 
             Container(
               alignment: Alignment.centerLeft,
@@ -195,8 +195,6 @@ class _HomeContentState extends State<HomeContent> {
               ),
             ),
             const SizedBox(height: 10),
-
-            // Shop list
             BlocBuilder<ShopBloc, ShopState>(
               builder: (context, state) {
                 switch (state) {
