@@ -3,16 +3,84 @@ import 'dart:async';
 
 // Flutter imports:
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 // Project imports:
 import 'package:customer_app/core/themes/app_colors.dart';
 import 'package:customer_app/core/themes/app_style.dart';
 
-/// App Resend Timer Component
-///
-/// A reusable component that displays a resend timer with countdown functionality.
-/// Used in OTP verification screens to manage resend attempts.
-class AppResendTimer extends StatefulWidget {
+/// Timer State
+class TimerState {
+  const TimerState({
+    required this.timeRemaining,
+    required this.canResend,
+  });
+
+  final int timeRemaining;
+  final bool canResend;
+
+  TimerState copyWith({
+    int? timeRemaining,
+    bool? canResend,
+  }) {
+    return TimerState(
+      timeRemaining: timeRemaining ?? this.timeRemaining,
+      canResend: canResend ?? this.canResend,
+    );
+  }
+}
+
+/// Timer Cubit
+class ResendTimerCubit extends Cubit<TimerState> {
+  ResendTimerCubit(this.initialTimeInSeconds)
+      : super(TimerState(
+          timeRemaining: initialTimeInSeconds,
+          canResend: initialTimeInSeconds <= 0,
+        ));
+
+  final int initialTimeInSeconds;
+  Timer? _timer;
+
+  void startTimer() {
+    _timer?.cancel();
+    
+    if (initialTimeInSeconds <= 0) {
+      emit(TimerState(timeRemaining: 0, canResend: true));
+      return;
+    }
+
+    emit(TimerState(timeRemaining: initialTimeInSeconds, canResend: false));
+    
+    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      final newTime = state.timeRemaining - 1;
+      
+      if (newTime > 0) {
+        emit(TimerState(timeRemaining: newTime, canResend: false));
+      } else {
+        emit(TimerState(timeRemaining: 0, canResend: true));
+        timer.cancel();
+      }
+    });
+  }
+
+  void resetTimer() {
+    _timer?.cancel();
+    emit(TimerState(
+      timeRemaining: initialTimeInSeconds,
+      canResend: initialTimeInSeconds <= 0,
+    ));
+    startTimer();
+  }
+
+  @override
+  Future<void> close() {
+    _timer?.cancel();
+    return super.close();
+  }
+}
+
+
+class AppResendTimer extends StatelessWidget {
   /// Creates an App Resend Timer component
   const AppResendTimer({
     super.key,
@@ -42,48 +110,81 @@ class AppResendTimer extends StatefulWidget {
   /// Whether the component is enabled
   final bool isEnabled;
 
+  void _onResendTapped(BuildContext context, bool canResend) {
+    if (canResend && isEnabled) {
+      context.read<ResendTimerCubit>().resetTimer();
+      onResendTapped?.call();
+    }
+  }
+
+  String _formatTime(int seconds) {
+    return "${seconds}s";
+  }
+
   @override
-  State<AppResendTimer> createState() => _AppResendTimerState();
+  Widget build(BuildContext context) {
+    final appColors = context.appColors;
+
+    return BlocProvider(
+      create: (context) => ResendTimerCubit(initialTimeInSeconds)..startTimer(),
+      child: Center(
+        child: BlocBuilder<ResendTimerCubit, TimerState>(
+          builder: (context, state) {
+            return GestureDetector(
+              onTap: () => _onResendTapped(context, state.canResend),
+              child: RichText(
+                text: TextSpan(
+                  children: [
+                    TextSpan(
+                      text: resendText,
+                      style: resendTextStyle ??
+                          AppTypography.getResendText(context).copyWith(
+                            color: state.canResend && isEnabled
+                                ? appColors.primary // Theme-aware primary color
+                                : appColors.onSurfaceVariant, // Theme-aware disabled color
+                          ),
+                    ),
+                    if (!state.canResend) ...[
+                      TextSpan(
+                        text: " (${_formatTime(state.timeRemaining)})",
+                        style: timerTextStyle ??
+                            AppTypography.getResendText(context).copyWith(
+                              color: appColors.onSurfaceVariant, // Theme-aware timer color
+                            ),
+                      ),
+                    ],
+                  ],
+                ),
+              ),
+            );
+          },
+        ),
+      ),
+    );
+  }
 }
 
-class _AppResendTimerState extends State<AppResendTimer> {
-  late int _timeRemaining;
-  Timer? _timer;
-  bool get _canResend => _timeRemaining <= 0;
+/// Alternative implementation if you want to provide the Cubit externally
+class AppResendTimerWithExternalCubit extends StatelessWidget {
+  const AppResendTimerWithExternalCubit({
+    super.key,
+    this.onResendTapped,
+    this.resendText = "Resend",
+    this.timerTextStyle,
+    this.resendTextStyle,
+    this.isEnabled = true,
+  });
 
-  @override
-  void initState() {
-    super.initState();
-    _timeRemaining = widget.initialTimeInSeconds;
-    _startTimer();
-  }
+  final VoidCallback? onResendTapped;
+  final String resendText;
+  final TextStyle? timerTextStyle;
+  final TextStyle? resendTextStyle;
+  final bool isEnabled;
 
-  @override
-  void dispose() {
-    _timer?.cancel();
-    super.dispose();
-  }
-
-  void _startTimer() {
-    _timer?.cancel();
-    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
-      if (_timeRemaining > 0) {
-        setState(() {
-          _timeRemaining--;
-        });
-      } else {
-        timer.cancel();
-      }
-    });
-  }
-
-  void _onResendTapped() {
-    if (_canResend && widget.isEnabled) {
-      setState(() {
-        _timeRemaining = widget.initialTimeInSeconds;
-      });
-      _startTimer();
-      widget.onResendTapped?.call();
+  void _onResendTapped(BuildContext context, bool canResend) {
+    if (canResend && isEnabled) {
+      context.read<ResendTimerCubit>().resetTimer();
+      onResendTapped?.call();
     }
   }
 
@@ -96,34 +197,36 @@ class _AppResendTimerState extends State<AppResendTimer> {
     final appColors = context.appColors;
 
     return Center(
-      child: GestureDetector(
-        onTap: _onResendTapped,
-        child: RichText(
-          text: TextSpan(
-            children: [
-              TextSpan(
-                text: widget.resendText,
-                style: widget.resendTextStyle ??
-                    AppTypography.getResendText(context).copyWith(
-                      color: _canResend && widget.isEnabled
-                          ? appColors.primary // Theme-aware primary color
-                          : appColors
-                              .onSurfaceVariant, // Theme-aware disabled color
+      child: BlocBuilder<ResendTimerCubit, TimerState>(
+        builder: (context, state) {
+          return GestureDetector(
+            onTap: () => _onResendTapped(context, state.canResend),
+            child: RichText(
+              text: TextSpan(
+                children: [
+                  TextSpan(
+                    text: resendText,
+                    style: resendTextStyle ??
+                        AppTypography.getResendText(context).copyWith(
+                          color: state.canResend && isEnabled
+                              ? appColors.primary
+                              : appColors.onSurfaceVariant,
+                        ),
+                  ),
+                  if (!state.canResend) ...[
+                    TextSpan(
+                      text: " (${_formatTime(state.timeRemaining)})",
+                      style: timerTextStyle ??
+                          AppTypography.getResendText(context).copyWith(
+                            color: appColors.onSurfaceVariant,
+                          ),
                     ),
+                  ],
+                ],
               ),
-              if (!_canResend) ...[
-                TextSpan(
-                  text: " (${_formatTime(_timeRemaining)})",
-                  style: widget.timerTextStyle ??
-                      AppTypography.getResendText(context).copyWith(
-                        color: appColors
-                            .onSurfaceVariant, // Theme-aware timer color
-                      ),
-                ),
-              ],
-            ],
-          ),
-        ),
+            ),
+          );
+        },
       ),
     );
   }

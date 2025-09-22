@@ -7,4 +7,5 @@ class AppIcons {
   static const String homeWallpaper = "$routeUrl/home_wallpaper.png";
   static const String timing = "$routeUrl/timing.png";
   static const String store = "$routeUrl/store.png";
+  static const String filterList = "$routeUrl/filter_list.png";
 }

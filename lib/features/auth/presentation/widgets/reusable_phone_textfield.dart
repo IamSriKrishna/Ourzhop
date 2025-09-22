@@ -1,11 +1,14 @@
+
 import 'package:customer_app/constants/phone_constants.dart';
 import 'package:customer_app/core/formatter/phone_number_formatter.dart';
 import 'package:customer_app/core/models/phone_number.dart';
 import 'package:customer_app/core/themes/app_colors.dart';
-import 'package:customer_app/core/validation/phone_validation_service.dart';
+import 'package:customer_app/features/auth/presentation/cubit/phone_textfield_cubit.dart';
+import 'package:customer_app/features/auth/presentation/cubit/phone_textfield_state.dart';
 import 'package:customer_app/features/auth/presentation/widgets/phone_input_fields.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class PhoneTextFieldConfig {
   final String labelText;
@@ -58,9 +61,8 @@ class ReusablePhoneTextField extends StatefulWidget {
 class _ReusablePhoneTextFieldState extends State<ReusablePhoneTextField> {
   late TextEditingController _internalController;
   late TextEditingController _phoneController;
-  late PhoneNumber _phoneNumber;
+  late PhoneTextFieldCubit _cubit;
   final FocusNode _focusNode = FocusNode();
-  bool _isFocused = false;
 
   TextEditingController get _effectiveController =>
       widget.controller ?? _internalController;
@@ -69,7 +71,7 @@ class _ReusablePhoneTextFieldState extends State<ReusablePhoneTextField> {
   void initState() {
     super.initState();
     _initializeControllers();
-    _initializePhoneNumber();
+    _initializeCubit();
     _setupListeners();
   }
 
@@ -78,13 +80,12 @@ class _ReusablePhoneTextFieldState extends State<ReusablePhoneTextField> {
     _phoneController = TextEditingController();
   }
 
-  void _initializePhoneNumber() {
-    final initialText = _effectiveController.text;
-    _phoneNumber = PhoneValidationService.parsePhoneNumber(
-      initialText,
+  void _initializeCubit() {
+    _cubit = PhoneTextFieldCubit(
       defaultCountryCode: widget.config.defaultCountryCode,
+      autoValidate: widget.config.autoValidate,
+      initialText: _effectiveController.text,
     );
-    _phoneController.text = _phoneNumber.formattedNumber;
   }
 
   void _setupListeners() {
@@ -93,46 +94,20 @@ class _ReusablePhoneTextFieldState extends State<ReusablePhoneTextField> {
   }
 
   void _handleFocusChange() {
-    setState(() => _isFocused = _focusNode.hasFocus);
+    _cubit.updateFocus(_focusNode.hasFocus);
   }
 
   void _handleControllerChange() {
-    final expectedText = _phoneNumber.displayNumber;
+    final currentState = _cubit.state;
+    final expectedText = currentState.phoneNumber.displayNumber;
     if (_effectiveController.text != expectedText) {
-      _parseAndUpdatePhoneNumber(_effectiveController.text);
+      _cubit.parseAndUpdateFromFullNumber(_effectiveController.text);
     }
   }
 
-  void _parseAndUpdatePhoneNumber(String fullNumber) {
-    final newPhoneNumber = PhoneValidationService.parsePhoneNumber(
-      fullNumber,
-      defaultCountryCode: widget.config.defaultCountryCode,
-    );
-
-    if (newPhoneNumber != _phoneNumber) {
-      setState(() {
-        _phoneNumber = newPhoneNumber;
-        _phoneController.text = _phoneNumber.formattedNumber;
-      });
-    }
-  }
-
-  void _updatePhoneNumber({String? countryCode, String? number}) {
-    final newPhoneNumber = _phoneNumber.copyWith(
-      countryCode: countryCode,
-      number: number,
-    );
-
-    if (newPhoneNumber != _phoneNumber) {
-      setState(() => _phoneNumber = newPhoneNumber);
-      _updateControllers();
-      _notifyCallbacks();
-    }
-  }
-
-  void _updateControllers() {
-    final displayNumber = _phoneNumber.displayNumber;
-    _phoneController.text = _phoneNumber.formattedNumber;
+  void _updateControllers(PhoneNumber phoneNumber) {
+    final displayNumber = phoneNumber.displayNumber;
+    _phoneController.text = phoneNumber.formattedNumber;
 
     if (_effectiveController.text != displayNumber) {
       _effectiveController.value = TextEditingValue(
@@ -142,24 +117,43 @@ class _ReusablePhoneTextFieldState extends State<ReusablePhoneTextField> {
     }
   }
 
-  void _notifyCallbacks() {
-    widget.onChanged?.call(_phoneNumber.displayNumber);
-    widget.onPhoneNumberChanged?.call(_phoneNumber);
+  void _notifyCallbacks(PhoneNumber phoneNumber) {
+    widget.onChanged?.call(phoneNumber.displayNumber);
+    widget.onPhoneNumberChanged?.call(phoneNumber);
   }
 
   @override
   Widget build(BuildContext context) {
-    return PhoneInputField(
-      height: widget.config.height,
-      labelText: widget.config.labelText,
-      errorText: widget.errorText,
-      isFocused: _isFocused,
-      enabled: widget.config.enabled,
-      phoneNumber: _phoneNumber,
-      onCountryChanged: (code) => _updatePhoneNumber(countryCode: code),
-      favoriteCountries: widget.config.favoriteCountries,
-      labelStyle: widget.config.labelStyle,
-      child: _buildPhoneInput(context),
+    return BlocProvider.value(
+      value: _cubit,
+      child: BlocListener<PhoneTextFieldCubit, PhoneTextFieldState>(
+        listener: (context, state) {
+          // Update controllers when phone number changes
+          _updateControllers(state.phoneNumber);
+          _notifyCallbacks(state.phoneNumber);
+          
+          // Update phone controller text if it changed
+          if (_phoneController.text != state.phoneControllerText) {
+            _phoneController.text = state.phoneControllerText;
+          }
+        },
+        child: BlocBuilder<PhoneTextFieldCubit, PhoneTextFieldState>(
+          builder: (context, state) {
+            return PhoneInputField(
+              height: widget.config.height,
+              labelText: widget.config.labelText,
+              errorText: widget.errorText,
+              isFocused: state.isFocused,
+              enabled: widget.config.enabled,
+              phoneNumber: state.phoneNumber,
+              onCountryChanged: (code) => _cubit.updatePhoneNumber(countryCode: code),
+              favoriteCountries: widget.config.favoriteCountries,
+              labelStyle: widget.config.labelStyle,
+              child: _buildPhoneInput(context),
+            );
+          },
+        ),
+      ),
     );
   }
 
@@ -177,25 +171,11 @@ class _ReusablePhoneTextFieldState extends State<ReusablePhoneTextField> {
         LengthLimitingTextInputFormatter(PhoneConstants.maxPhoneLength),
         PhoneNumberFormatter(),
       ],
-      onChanged: _handlePhoneInputChange,
+      onChanged: (value) => _cubit.handlePhoneInputChange(value),
       validator: widget.validator,
       style: widget.config.textStyle ?? _getDefaultTextStyle(theme, appColors),
       decoration: _getInputDecoration(theme, appColors),
     );
-  }
-
-  void _handlePhoneInputChange(String value) {
-    final digitsOnly = value.replaceAll(RegExp(r'\D'), '');
-    _updatePhoneNumber(number: digitsOnly);
-
-    if (widget.config.autoValidate) {
-      _performAutoValidation();
-    }
-  }
-
-  void _performAutoValidation() {
-    final validationResult =
-        PhoneValidationService.validatePhoneNumber(_phoneNumber);
   }
 
   TextStyle _getDefaultTextStyle(ThemeData theme, dynamic appColors) {
@@ -228,6 +208,7 @@ class _ReusablePhoneTextFieldState extends State<ReusablePhoneTextField> {
     _effectiveController.removeListener(_handleControllerChange);
     _focusNode.dispose();
     _phoneController.dispose();
+    _cubit.close();
 
     if (widget.controller == null) {
       _internalController.dispose();

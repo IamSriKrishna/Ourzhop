@@ -1,5 +1,7 @@
+import 'package:customer_app/features/home/presentation/cubit/store_list_cubit.dart';
 import 'package:customer_app/features/home/widgets/store_list_widgets.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class StoreScreenList extends StatefulWidget {
   final String? categoryId;
@@ -20,27 +22,10 @@ class _StoreScreenListState extends State<StoreScreenList> {
   final TextEditingController _searchController = TextEditingController();
 
   @override
-  void initState() {
-    super.initState();
-    _scrollController.addListener(_onScroll);
-  }
-
-  @override
   void dispose() {
     _scrollController.dispose();
     _searchController.dispose();
     super.dispose();
-  }
-
-  void _onScroll() {
-    if (_scrollController.position.pixels ==
-        _scrollController.position.maxScrollExtent) {
-      _loadMoreStores();
-    }
-  }
-
-  void _loadMoreStores() {
-    print('Loading more stores...');
   }
 
   @override
@@ -48,23 +33,24 @@ class _StoreScreenListState extends State<StoreScreenList> {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
 
-    return Scaffold(
-      backgroundColor: colorScheme.surfaceContainerHighest.withOpacity(0.3),
-      body: Column(
-        children: [
-          StoreAppBar(
-            context: context,
-            searchController: _searchController,
-            categoryName: widget.categoryName,
-          ),
-          Expanded(
-            child: StoreList(
+    return BlocProvider(
+      create: (context) => StoreCubit(categoryId: widget.categoryId)..loadStores(),
+      child: Scaffold(
+        backgroundColor: colorScheme.surfaceContainerHighest.withOpacity(0.3),
+        body: Column(
+          children: [
+            StoreAppBar(
               context: context,
-              scrollController: _scrollController,
-              categoryId: widget.categoryId,
+              searchController: _searchController,
+              categoryName: widget.categoryName,
             ),
-          ),
-        ],
+            Expanded(
+              child: StoreList(
+                scrollController: _scrollController,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

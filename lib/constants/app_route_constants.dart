@@ -13,6 +13,8 @@ class AppRoutes {
   static const String searchScreen = '/search-screen';
   static const String storeListScreen = '/store-list-screen';
   static const String storeScreen = '/store-screen';
+  static const String groceryStoreScreen = '/grocery-store-screen';
+  static const String productScreen = '/product-screen';
   //category
   static const String categorySearchScreen = '/category-search-screen';
   static const String categoryStoreListScreen = '/category-store-list-screen';

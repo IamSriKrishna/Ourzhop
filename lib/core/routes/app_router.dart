@@ -4,6 +4,9 @@
 import 'package:customer_app/features/auth/presentation/screens/location_selection_screen.dart';
 import 'package:customer_app/features/cart/presentation/screen/cart_screen.dart';
 import 'package:customer_app/features/category/presentation/screens/category_screen.dart';
+import 'package:customer_app/features/home/cubit/cart/cart_cubit.dart';
+import 'package:customer_app/features/home/presentation/screens/grocery_store_screen.dart';
+import 'package:customer_app/features/home/presentation/screens/product_detail_screen.dart';
 import 'package:customer_app/features/home/presentation/screens/search_screen.dart';
 import 'package:customer_app/features/home/presentation/screens/store_screen.dart';
 import 'package:customer_app/features/home/presentation/screens/store_screen_list.dart';
@@ -23,7 +26,6 @@ import 'package:customer_app/features/auth/presentation/screens/login_screen.dar
 import 'package:customer_app/features/auth/presentation/screens/otp_screen.dart';
 import 'package:customer_app/features/home/presentation/screens/home_content.dart';
 import 'package:customer_app/features/home/presentation/screens/home_screen.dart';
-import 'package:customer_app/features/pages/page.dart';
 
 // Project imports
 
@@ -62,13 +64,42 @@ class AppRouter {
                 //   },
                 // ),
                 GoRoute(
-                  parentNavigatorKey: AppRouter.rootNavigatorKey,
-                  path: AppRoutes.storeScreen,
-                  name: AppRoutes.storeScreen,
-                  builder: (context, state) {
-                    return StoreScreen();
-                  },
-                ),
+                    parentNavigatorKey: AppRouter.rootNavigatorKey,
+                    path: AppRoutes.storeScreen,
+                    name: AppRoutes.storeScreen,
+                    builder: (context, state) {
+                      return StoreScreen();
+                    },
+                    routes: [
+                      GoRoute(
+                          parentNavigatorKey: AppRouter.rootNavigatorKey,
+                          path: AppRoutes.groceryStoreScreen,
+                          name: AppRoutes.groceryStoreScreen,
+                          builder: (context, state) {
+                            final cartCubit = state.extra as CartCubit;
+                            return BlocProvider.value(
+                              value: cartCubit,
+                              child: GroceryHomePage(
+                                cartCubit: cartCubit,
+                              ),
+                            );
+                          },
+                          routes: [
+                            GoRoute(
+                                parentNavigatorKey: AppRouter.rootNavigatorKey,
+                                path: AppRoutes.productScreen,
+                                name: AppRoutes.productScreen,
+                                builder: (context, state) {
+                                  final cartCubit = state.extra as CartCubit;
+                                  return BlocProvider.value(
+                                    value: cartCubit,
+                                    child: ProductDetailScreen(
+                                      cartCubit: cartCubit,
+                                    ),
+                                  );
+                                })
+                          ]),
+                    ]),
                 //search screen
                 GoRoute(
                     path: AppRoutes.searchScreen,

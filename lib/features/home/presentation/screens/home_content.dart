@@ -1,6 +1,7 @@
 import 'package:customer_app/constants/app_images.dart';
 import 'package:customer_app/core/services/auth_preference_service.dart';
 import 'package:customer_app/features/auth/data/models/user_model.dart';
+import 'package:customer_app/features/home/cubit/location_cubit.dart';
 import 'package:customer_app/features/home/domain/usecase/category_usecase.dart';
 import 'package:customer_app/features/home/domain/usecase/search_usecase.dart';
 import 'package:customer_app/features/home/domain/usecase/shop_usecase.dart';
@@ -22,31 +23,6 @@ class HomeContent extends StatefulWidget {
 
 class _HomeContentState extends State<HomeContent> {
   final _authPrefs = serviceLocator<AuthPreferenceService>();
-  double? _currentLat;
-  double? _currentLng;
-
-  @override
-  void initState() {
-    super.initState();
-    _getCurrentLocation();
-  }
-
-  Future<void> _getCurrentLocation() async {
-    try {
-      final coordinates = await LocationHelper.getCoordinates();
-      if (coordinates != null && mounted) {
-        setState(() {
-          _currentLat = coordinates.lat;
-          _currentLng = coordinates.lng;
-        });
-      }
-    } catch (e) {
-      setState(() {
-        _currentLat = 12.8738;
-        _currentLng = 80.0784;
-      });
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -80,45 +56,44 @@ class _HomeContentState extends State<HomeContent> {
         return MultiBlocProvider(
           providers: [
             BlocProvider(
+              create: (_) => LocationCubit()..getCurrentLocation(),
+            ),
+            BlocProvider(
               create: (_) => CategoryBloc(
                 getCategories: serviceLocator<GetCategoriesUseCase>(),
               )..add(GetCategoriesEvent(limit: 10, cursor: null)),
             ),
             BlocProvider(
-              create: (_) {
-                final bloc = ShopBloc(
-                  getShopsByLocation:
-                      serviceLocator<GetShopsByLocationUseCase>(),
-                  getAutocompleteResults:
-                      serviceLocator<GetAutocompleteResultsUseCase>(),
-                );
-
-                if (_currentLat != null && _currentLng != null) {
-                  bloc.add(GetShopsByLocationEvent(
-                    limit: 10,
-                    lat: _currentLat!,
-                    lng: _currentLng!,
-                    cursor: null,
-                  ));
-                }
-
-                return bloc;
-              },
+              create: (_) => ShopBloc(
+                getShopsByLocation: serviceLocator<GetShopsByLocationUseCase>(),
+                getAutocompleteResults: serviceLocator<GetAutocompleteResultsUseCase>(),
+              ),
             ),
           ],
-          child: Scaffold(
-            backgroundColor:
-                colorScheme.surfaceContainerHighest.withOpacity(0.3),
-            body: CustomScrollView(
-              slivers: [
-                HomeContentWidgets.searchAndLocation(user.location!, context),
-                HomeContentWidgets.appBar(context),
-                _buildContent(context),
-                _buildLoadMoreButton(context),
-                SliverToBoxAdapter(
-                  child: Image.asset(AppImages.homeWallpaper),
-                ),
-              ],
+          child: BlocListener<LocationCubit, LocationState>(
+            listener: (context, locationState) {
+              if (locationState.lat != null && locationState.lng != null) {
+                context.read<ShopBloc>().add(GetShopsByLocationEvent(
+                  limit: 10,
+                  lat: locationState.lat!,
+                  lng: locationState.lng!,
+                  cursor: null,
+                ));
+              }
+            },
+            child: Scaffold(
+              backgroundColor: colorScheme.surfaceContainerHighest.withOpacity(0.3),
+              body: CustomScrollView(
+                slivers: [
+                  HomeContentWidgets.searchAndLocation(user.location!, context),
+                  HomeContentWidgets.appBar(context),
+                  _buildContent(context),
+                  _buildLoadMoreButton(context),
+                  SliverToBoxAdapter(
+                    child: Image.asset(AppImages.homeWallpaper),
+                  ),
+                ],
+              ),
             ),
           ),
         );
@@ -140,21 +115,6 @@ class _HomeContentState extends State<HomeContent> {
             HomeContentSubwidget.tabContent(context),
             const SizedBox(height: 30),
 
-            // Container(
-            //   alignment: Alignment.centerLeft,
-            //   margin: const EdgeInsets.symmetric(horizontal: 20),
-            //   child: Text(
-            //     'Recommended',
-            //     style: TextStyle(
-            //       fontSize: 20,
-            //       fontWeight: FontWeight.bold,
-            //       color: colorScheme.onSurface,
-            //     ),
-            //   ),
-            // ),
-            // HomeContentSubwidget.recommendedWidgets(context),
-            // const SizedBox(height: 20),
-
             Container(
               alignment: Alignment.centerLeft,
               margin: const EdgeInsets.symmetric(horizontal: 20),
@@ -169,26 +129,30 @@ class _HomeContentState extends State<HomeContent> {
                     ),
                   ),
                   const Spacer(),
-                  BlocBuilder<ShopBloc, ShopState>(
-                    builder: (context, state) {
-                      if (state is ShopLoaded) {
-                        return TextButton.icon(
-                          onPressed: () {
-                            if (_currentLat != null && _currentLng != null) {
-                              context.read<ShopBloc>().add(
-                                    RefreshShopsEvent(
-                                      limit: 10,
-                                      lat: _currentLat!,
-                                      lng: _currentLng!,
-                                    ),
-                                  );
-                            }
-                          },
-                          icon: const Icon(Icons.refresh, size: 16),
-                          label: const Text('Refresh'),
-                        );
-                      }
-                      return const SizedBox.shrink();
+                  BlocBuilder<LocationCubit, LocationState>(
+                    builder: (context, locationState) {
+                      return BlocBuilder<ShopBloc, ShopState>(
+                        builder: (context, shopState) {
+                          if (shopState is ShopLoaded) {
+                            return TextButton.icon(
+                              onPressed: locationState.lat != null && locationState.lng != null
+                                  ? () {
+                                      context.read<ShopBloc>().add(
+                                            RefreshShopsEvent(
+                                              limit: 10,
+                                              lat: locationState.lat!,
+                                              lng: locationState.lng!,
+                                            ),
+                                          );
+                                    }
+                                  : null,
+                              icon: const Icon(Icons.refresh, size: 16),
+                              label: const Text('Refresh'),
+                            );
+                          }
+                          return const SizedBox.shrink();
+                        },
+                      );
                     },
                   ),
                 ],
@@ -260,27 +224,28 @@ class _HomeContentState extends State<HomeContent> {
                   ? state.isLoadingMore
                       ? const CircularProgressIndicator()
                       : state.meta.hasMore
-                          ? ElevatedButton(
-                              onPressed: () {
-                                if (_currentLat != null &&
-                                    _currentLng != null) {
-                                  context.read<ShopBloc>().add(
-                                        LoadMoreShopsEvent(
-                                          limit: 10,
-                                          lat: _currentLat!,
-                                          lng: _currentLng!,
-                                        ),
-                                      );
-                                }
+                          ? BlocBuilder<LocationCubit, LocationState>(
+                              builder: (context, locationState) {
+                                return ElevatedButton(
+                                  onPressed: locationState.lat != null && locationState.lng != null
+                                      ? () {
+                                          context.read<ShopBloc>().add(
+                                                LoadMoreShopsEvent(
+                                                  limit: 10,
+                                                  lat: locationState.lat!,
+                                                  lng: locationState.lng!,
+                                                ),
+                                              );
+                                        }
+                                      : null,
+                                  child: const Text("Load more shops"),
+                                );
                               },
-                              child: const Text("Load more shops"),
                             )
                           : Text(
                               "No more shops to load",
                               style: TextStyle(
-                                color: Theme.of(context)
-                                    .colorScheme
-                                    .onSurfaceVariant,
+                                color: Theme.of(context).colorScheme.onSurfaceVariant,
                               ),
                             )
                   : const SizedBox.shrink(),
@@ -331,105 +296,113 @@ class _HomeContentState extends State<HomeContent> {
   Widget _buildEmptyState(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
 
-    return Container(
-      margin: const EdgeInsets.all(20),
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: colorScheme.surfaceContainer,
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: Column(
-        children: [
-          Icon(
-            Icons.store_outlined,
-            size: 64,
-            color: colorScheme.onSurfaceVariant,
+    return BlocBuilder<LocationCubit, LocationState>(
+      builder: (context, locationState) {
+        return Container(
+          margin: const EdgeInsets.all(20),
+          padding: const EdgeInsets.all(20),
+          decoration: BoxDecoration(
+            color: colorScheme.surfaceContainer,
+            borderRadius: BorderRadius.circular(12),
           ),
-          const SizedBox(height: 16),
-          Text(
-            'No shops found nearby',
-            style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-              color: colorScheme.onSurface,
-            ),
+          child: Column(
+            children: [
+              Icon(
+                Icons.store_outlined,
+                size: 64,
+                color: colorScheme.onSurfaceVariant,
+              ),
+              const SizedBox(height: 16),
+              Text(
+                'No shops found nearby',
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: colorScheme.onSurface,
+                ),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                'Try adjusting your location or check back later',
+                style: TextStyle(color: colorScheme.onSurfaceVariant),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 16),
+              ElevatedButton.icon(
+                onPressed: locationState.lat != null && locationState.lng != null
+                    ? () {
+                        context.read<ShopBloc>().add(
+                              RefreshShopsEvent(
+                                limit: 10,
+                                lat: locationState.lat!,
+                                lng: locationState.lng!,
+                              ),
+                            );
+                      }
+                    : null,
+                icon: const Icon(Icons.refresh),
+                label: const Text('Try Again'),
+              ),
+            ],
           ),
-          const SizedBox(height: 8),
-          Text(
-            'Try adjusting your location or check back later',
-            style: TextStyle(color: colorScheme.onSurfaceVariant),
-            textAlign: TextAlign.center,
-          ),
-          const SizedBox(height: 16),
-          ElevatedButton.icon(
-            onPressed: () {
-              if (_currentLat != null && _currentLng != null) {
-                context.read<ShopBloc>().add(
-                      RefreshShopsEvent(
-                        limit: 10,
-                        lat: _currentLat!,
-                        lng: _currentLng!,
-                      ),
-                    );
-              }
-            },
-            icon: const Icon(Icons.refresh),
-            label: const Text('Try Again'),
-          ),
-        ],
-      ),
+        );
+      },
     );
   }
 
   Widget _buildErrorState(BuildContext context, String message) {
     final colorScheme = Theme.of(context).colorScheme;
 
-    return Container(
-      margin: const EdgeInsets.all(20),
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: colorScheme.errorContainer,
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: Column(
-        children: [
-          Icon(
-            Icons.error_outline,
-            color: colorScheme.onErrorContainer,
-            size: 48,
+    return BlocBuilder<LocationCubit, LocationState>(
+      builder: (context, locationState) {
+        return Container(
+          margin: const EdgeInsets.all(20),
+          padding: const EdgeInsets.all(20),
+          decoration: BoxDecoration(
+            color: colorScheme.errorContainer,
+            borderRadius: BorderRadius.circular(12),
           ),
-          const SizedBox(height: 12),
-          Text(
-            'Failed to load shops',
-            style: TextStyle(
-              color: colorScheme.onErrorContainer,
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
-            ),
+          child: Column(
+            children: [
+              Icon(
+                Icons.error_outline,
+                color: colorScheme.onErrorContainer,
+                size: 48,
+              ),
+              const SizedBox(height: 12),
+              Text(
+                'Failed to load shops',
+                style: TextStyle(
+                  color: colorScheme.onErrorContainer,
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                message,
+                style: TextStyle(color: colorScheme.onErrorContainer),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 16),
+              ElevatedButton(
+                onPressed: locationState.lat != null && locationState.lng != null
+                    ? () {
+                        context.read<ShopBloc>().add(
+                              RefreshShopsEvent(
+                                limit: 10,
+                                lat: locationState.lat!,
+                                lng: locationState.lng!,
+                              ),
+                            );
+                      }
+                    : null,
+                child: const Text('Retry'),
+              ),
+            ],
           ),
-          const SizedBox(height: 8),
-          Text(
-            message,
-            style: TextStyle(color: colorScheme.onErrorContainer),
-            textAlign: TextAlign.center,
-          ),
-          const SizedBox(height: 16),
-          ElevatedButton(
-            onPressed: () {
-              if (_currentLat != null && _currentLng != null) {
-                context.read<ShopBloc>().add(
-                      RefreshShopsEvent(
-                        limit: 10,
-                        lat: _currentLat!,
-                        lng: _currentLng!,
-                      ),
-                    );
-              }
-            },
-            child: const Text('Retry'),
-          ),
-        ],
-      ),
+        );
+      },
     );
   }
 }

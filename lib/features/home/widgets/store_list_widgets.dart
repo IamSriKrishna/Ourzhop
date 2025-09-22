@@ -1,30 +1,239 @@
 // ignore_for_file: deprecated_member_use
 
+import 'package:customer_app/features/home/presentation/cubit/store_list_cubit.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
-class StoreModel {
-  final String storeId;
-  final String name;
-  final String category;
-  final String imageUrl;
-  final double rating;
-  final String deliveryTime;
-  final String distance;
-  final bool freeDelivery;
-  final bool isOpen;
+// Updated StoreList widget using BlocBuilder
+class StoreList extends StatefulWidget {
+  final ScrollController scrollController;
 
-  const StoreModel({
-    required this.storeId,
-    required this.name,
-    required this.category,
-    required this.imageUrl,
-    required this.rating,
-    required this.deliveryTime,
-    required this.distance,
-    this.freeDelivery = false,
-    this.isOpen = true,
+  const StoreList({
+    super.key,
+    required this.scrollController,
   });
+
+  @override
+  State<StoreList> createState() => _StoreListState();
 }
+
+class _StoreListState extends State<StoreList> {
+  @override
+  void initState() {
+    super.initState();
+    widget.scrollController.addListener(_onScroll);
+  }
+
+  @override
+  void dispose() {
+    widget.scrollController.removeListener(_onScroll);
+    super.dispose();
+  }
+
+  void _onScroll() {
+    if (widget.scrollController.position.pixels >=
+        widget.scrollController.position.maxScrollExtent - 200) {
+      context.read<StoreCubit>().loadMoreStores();
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocBuilder<StoreCubit, StoreState>(
+      builder: (context, state) {
+        if (state is StoreLoading) {
+          return _buildLoadingList();
+        }
+
+        if (state is StoreError) {
+          return _buildErrorState(state.message);
+        }
+
+        if (state is StoreLoaded) {
+          if (state.stores.isEmpty) {
+            return _buildEmptyState();
+          }
+
+          return _buildStoreList(state);
+        }
+
+        return const SizedBox.shrink();
+      },
+    );
+  }
+
+  Widget _buildLoadingList() {
+    return ListView.builder(
+      padding: const EdgeInsets.all(16),
+      itemCount: 5,
+      itemBuilder: (context, index) {
+        return const Padding(
+          padding: EdgeInsets.only(bottom: 16),
+          child: StoreShimmerCard(),
+        );
+      },
+    );
+  }
+
+  Widget _buildErrorState(String errorMessage) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(
+            Icons.error_outline,
+            size: 64,
+            color: colorScheme.error,
+          ),
+          const SizedBox(height: 16),
+          Text(
+            'Error loading stores',
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+              color: colorScheme.error,
+            ),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            errorMessage,
+            style: TextStyle(
+              fontSize: 14,
+              color: colorScheme.onSurface.withOpacity(0.7),
+            ),
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: 16),
+          ElevatedButton(
+            onPressed: () => context.read<StoreCubit>().loadStores(),
+            child: const Text('Retry'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildEmptyState() {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(
+            Icons.store_outlined,
+            size: 64,
+            color: colorScheme.onSurface.withOpacity(0.5),
+          ),
+          const SizedBox(height: 16),
+          Text(
+            'No stores found',
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+              color: colorScheme.onSurface.withOpacity(0.7),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildStoreList(StoreLoaded state) {
+    return RefreshIndicator(
+      onRefresh: () => context.read<StoreCubit>().refreshStores(),
+      child: ListView.builder(
+        controller: widget.scrollController,
+        padding: const EdgeInsets.all(16),
+        itemCount: state.stores.length + (state.hasMoreData ? 1 : 0),
+        itemBuilder: (context, index) {
+          if (index == state.stores.length) {
+            if (state.isLoadingMore) {
+              return const Padding(
+                padding: EdgeInsets.all(16),
+                child: Center(
+                  child: CircularProgressIndicator(),
+                ),
+              );
+            } else if (state.hasMoreData) {
+              return LoadMoreButton(
+                onPressed: () => context.read<StoreCubit>().loadMoreStores(),
+              );
+            } else {
+              return const SizedBox.shrink();
+            }
+          }
+
+          return Padding(
+            padding: const EdgeInsets.only(bottom: 16),
+            child: StoreCard(store: state.stores[index]),
+          );
+        },
+      ),
+    );
+  }
+}
+
+// Updated StoreScreenList with BlocProvider
+class StoreScreenList extends StatefulWidget {
+  final String? categoryId;
+  final String? categoryName;
+
+  const StoreScreenList({
+    super.key,
+    this.categoryId,
+    this.categoryName,
+  });
+
+  @override
+  State<StoreScreenList> createState() => _StoreScreenListState();
+}
+
+class _StoreScreenListState extends State<StoreScreenList> {
+  final ScrollController _scrollController = ScrollController();
+  final TextEditingController _searchController = TextEditingController();
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    _searchController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+
+    return BlocProvider(
+      create: (context) => StoreCubit(categoryId: widget.categoryId)..loadStores(),
+      child: Scaffold(
+        backgroundColor: colorScheme.surfaceContainerHighest.withOpacity(0.3),
+        body: Column(
+          children: [
+            StoreAppBar(
+              context: context,
+              searchController: _searchController,
+              categoryName: widget.categoryName,
+            ),
+            Expanded(
+              child: StoreList(
+                scrollController: _scrollController,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+// Keep the existing UI widgets (StoreAppBar, BackButton, StoreSearchBar, etc.)
+// These remain the same as in your original code
 
 class StoreAppBar extends StatelessWidget {
   final BuildContext context;
@@ -96,7 +305,7 @@ class BackButton extends StatelessWidget {
             ),
           ],
         ),
-        child: Icon(
+        child: const Icon(
           Icons.arrow_back,
           color: Colors.black,
           size: 20,
@@ -134,12 +343,14 @@ class StoreSearchBar extends StatelessWidget {
         ],
       ),
       child: TextField(
+        controller: controller,
         autofocus: true,
         onChanged: (value) {
+          // TODO: Implement search functionality with Cubit
           debugPrint('Search query: $value');
         },
         decoration: InputDecoration(
-          hintText: 'Item name',
+          hintText: hintText,
           hintStyle: TextStyle(
             color: Colors.grey[600],
             fontSize: 16,
@@ -182,229 +393,6 @@ class StoreSearchBar extends StatelessWidget {
           color: Colors.black87,
         ),
       ),
-    );
-  }
-}
-
-class StoreList extends StatefulWidget {
-  final BuildContext context;
-  final ScrollController scrollController;
-  final String? categoryId;
-
-  const StoreList({
-    super.key,
-    required this.context,
-    required this.scrollController,
-    this.categoryId,
-  });
-
-  @override
-  State<StoreList> createState() => _StoreListState();
-}
-
-class _StoreListState extends State<StoreList> {
-  List<StoreModel> stores = [];
-  bool isLoading = false;
-  bool isLoadingMore = false;
-  String? error;
-
-  @override
-  void initState() {
-    super.initState();
-    _loadStores();
-  }
-
-  void _loadStores() {
-    setState(() {
-      isLoading = true;
-      error = null;
-    });
-
-    Future.delayed(const Duration(seconds: 2), () {
-      if (mounted) {
-        setState(() {
-          stores = _getDummyStores();
-          isLoading = false;
-        });
-      }
-    });
-  }
-
-  void _loadMoreStores() {
-    if (isLoadingMore) return;
-
-    setState(() {
-      isLoadingMore = true;
-    });
-    Future.delayed(const Duration(seconds: 1), () {
-      if (mounted) {
-        setState(() {
-          stores.addAll(_getDummyStores(startIndex: stores.length));
-          isLoadingMore = false;
-        });
-      }
-    });
-  }
-
-  List<StoreModel> _getDummyStores({int startIndex = 0}) {
-    return List.generate(10, (index) {
-      final realIndex = startIndex + index;
-      final categories = [
-        'Fashion',
-        'Bakery',
-        'Electronics',
-        'Grocery',
-        'Beauty'
-      ];
-      final category = categories[realIndex % categories.length];
-
-      return StoreModel(
-        storeId: 'store_${realIndex + 1}',
-        name: 'Store name',
-        category: category,
-        imageUrl: _getStoreImage(category),
-        rating: 4.5,
-        deliveryTime: '10-15 mins',
-        distance: '5 Kms',
-        freeDelivery: realIndex % 2 == 0,
-        isOpen: true,
-      );
-    });
-  }
-
-  String _getStoreImage(String category) {
-    switch (category.toLowerCase()) {
-      case 'fashion':
-        return 'https://images.unsplash.com/photo-1441984904996-e0b6ba687e04?w=400&h=200&fit=crop';
-      case 'bakery':
-        return 'https://images.unsplash.com/photo-1509440159596-0249088772ff?w=400&h=200&fit=crop';
-      case 'electronics':
-        return 'https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=400&h=200&fit=crop';
-      case 'grocery':
-        return 'https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=400&h=200&fit=crop';
-      default:
-        return 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=200&fit=crop';
-    }
-  }
-
-  Widget _buildLoadingList() {
-    return ListView.builder(
-      padding: const EdgeInsets.all(16),
-      itemCount: 5,
-      itemBuilder: (context, index) {
-        return Padding(
-          padding: const EdgeInsets.only(bottom: 16),
-          child: StoreShimmerCard(),
-        );
-      },
-    );
-  }
-
-  Widget _buildErrorState() {
-    final theme = Theme.of(context);
-    final colorScheme = theme.colorScheme;
-
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(
-            Icons.error_outline,
-            size: 64,
-            color: colorScheme.error,
-          ),
-          const SizedBox(height: 16),
-          Text(
-            'Error loading stores',
-            style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-              color: colorScheme.error,
-            ),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            error ?? 'Something went wrong',
-            style: TextStyle(
-              fontSize: 14,
-              color: colorScheme.onSurface.withOpacity(0.7),
-            ),
-            textAlign: TextAlign.center,
-          ),
-          const SizedBox(height: 16),
-          ElevatedButton(
-            onPressed: _loadStores,
-            child: const Text('Retry'),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildEmptyState() {
-    final theme = Theme.of(context);
-    final colorScheme = theme.colorScheme;
-
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(
-            Icons.store_outlined,
-            size: 64,
-            color: colorScheme.onSurface.withOpacity(0.5),
-          ),
-          const SizedBox(height: 16),
-          Text(
-            'No stores found',
-            style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-              color: colorScheme.onSurface.withOpacity(0.7),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    if (isLoading) {
-      return _buildLoadingList();
-    }
-
-    if (error != null) {
-      return _buildErrorState();
-    }
-
-    if (stores.isEmpty) {
-      return _buildEmptyState();
-    }
-
-    return ListView.builder(
-      controller: widget.scrollController,
-      padding: const EdgeInsets.all(16),
-      itemCount: stores.length + (isLoadingMore ? 1 : 1),
-      itemBuilder: (context, index) {
-        if (index == stores.length) {
-          if (isLoadingMore) {
-            return const Padding(
-              padding: EdgeInsets.all(16),
-              child: Center(
-                child: CircularProgressIndicator(),
-              ),
-            );
-          } else {
-            return LoadMoreButton(onPressed: _loadMoreStores);
-          }
-        }
-
-        return Padding(
-          padding: const EdgeInsets.only(bottom: 16),
-          child: StoreCard(store: stores[index]),
-        );
-      },
     );
   }
 }
@@ -517,7 +505,9 @@ class StoreCard extends StatelessWidget {
     final colorScheme = theme.colorScheme;
 
     return GestureDetector(
-      onTap: () {},
+      onTap: () {
+        // TODO: Navigate to store details
+      },
       child: Container(
         decoration: BoxDecoration(
           color: colorScheme.surface,
@@ -605,7 +595,6 @@ class StoreCard extends StatelessWidget {
                           ],
                         ),
                       ),
-                      // Rating Badge
                       Container(
                         padding: const EdgeInsets.symmetric(
                           horizontal: 8,
