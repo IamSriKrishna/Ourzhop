@@ -1,8 +1,8 @@
 
 import 'package:customer_app/common/network/result/api_result.dart';
-import 'package:customer_app/features/auth/domain/usecases/location_usercase.dart';
-import 'package:customer_app/features/auth/presentation/bloc/location/location_event.dart';
-import 'package:customer_app/features/auth/presentation/bloc/location/location_state.dart';
+import 'package:customer_app/features/location/domain/usecase/location_usercase.dart';
+import 'package:customer_app/features/location/presentation/bloc/location/location_event.dart';
+import 'package:customer_app/features/location/presentation/bloc/location/location_state.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class LocationSearchBloc extends Bloc<LocationSearchEvent, LocationSearchState> {

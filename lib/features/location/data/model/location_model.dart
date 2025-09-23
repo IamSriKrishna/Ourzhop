@@ -1,6 +1,6 @@
 
 
-import 'package:customer_app/features/auth/domain/entities/location_entities.dart';
+import 'package:customer_app/features/location/domain/entities/location_entities.dart';
 import 'package:flutter/foundation.dart' show immutable;
 import 'package:json_annotation/json_annotation.dart';
 part 'location_model.g.dart';

@@ -1,5 +1,5 @@
 
-import 'package:customer_app/features/auth/data/models/location_model.dart';
+import 'package:customer_app/features/location/data/model/location_model.dart';
 
 abstract class LocationSearchState {}
 

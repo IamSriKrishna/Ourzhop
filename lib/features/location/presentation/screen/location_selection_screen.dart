@@ -1,10 +1,10 @@
 
-import 'package:customer_app/features/auth/presentation/bloc/location_selection_cubit.dart';
-import 'package:customer_app/features/auth/presentation/widgets/continue_button.dart';
-import 'package:customer_app/features/auth/presentation/widgets/current_location_card.dart';
-import 'package:customer_app/features/auth/presentation/widgets/error_display_card.dart';
-import 'package:customer_app/features/auth/presentation/widgets/location_search_input.dart';
-import 'package:customer_app/features/auth/presentation/widgets/location_search_result.dart';
+import 'package:customer_app/features/location/presentation/bloc/location_selector_cubit.dart';
+import 'package:customer_app/features/location/presentation/widgets/continue_button.dart';
+import 'package:customer_app/features/location/presentation/widgets/current_location_card.dart';
+import 'package:customer_app/features/location/presentation/widgets/error_display_card.dart';
+import 'package:customer_app/features/location/presentation/widgets/location_search_input.dart';
+import 'package:customer_app/features/location/presentation/widgets/location_search_result.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -16,8 +16,8 @@ import 'package:customer_app/constants/app_route_constants.dart';
 import 'package:customer_app/core/services/auth_preference_service.dart';
 import 'package:customer_app/core/themes/app_colors.dart';
 import 'package:customer_app/core/themes/app_style.dart';
-import 'package:customer_app/features/auth/presentation/bloc/location/location_bloc.dart';
-import 'package:customer_app/features/auth/presentation/bloc/location/location_event.dart';
+import 'package:customer_app/features/location/presentation/bloc/location/location_bloc.dart';
+import 'package:customer_app/features/location/presentation/bloc/location/location_event.dart';
 import 'package:customer_app/service_locator.dart';
 
 class LocationSelectionScreen extends StatelessWidget {

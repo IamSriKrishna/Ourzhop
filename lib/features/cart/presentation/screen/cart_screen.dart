@@ -1,10 +1,9 @@
-import 'package:customer_app/constants/app_images.dart';
+
 import 'package:customer_app/core/services/auth_preference_service.dart';
 import 'package:customer_app/features/auth/data/models/user_model.dart';
 import 'package:customer_app/features/cart/presentation/widgets/cart_widgets.dart';
 import 'package:customer_app/service_locator.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 
 class CartContent extends StatefulWidget {
   const CartContent({super.key});
@@ -43,7 +42,6 @@ class _CartContentState extends State<CartContent> {
             ),
           );
         }
-        final user = snap.data!;
 
         return Scaffold(
           backgroundColor: colorScheme.surface,

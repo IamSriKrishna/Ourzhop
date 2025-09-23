@@ -1,8 +1,9 @@
-import 'package:customer_app/features/auth/presentation/bloc/location_selection_cubit.dart';
+
+import 'package:customer_app/features/location/presentation/bloc/location_selector_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:customer_app/features/auth/presentation/bloc/location/location_bloc.dart';
-import 'package:customer_app/features/auth/presentation/bloc/location/location_event.dart';
+import 'package:customer_app/features/location/presentation/bloc/location/location_bloc.dart';
+import 'package:customer_app/features/location/presentation/bloc/location/location_event.dart';
 
 class LocationSearchInput extends StatefulWidget {
   final Function(String)? onLocationSelected;
@@ -95,9 +96,4 @@ class _LocationSearchInputState extends State<LocationSearchInput> {
     context.read<LocationSelectionCubit>().clearSelection();
   }
 
-  void _onLocationSelected(String location) {
-    _controller.text = location;
-    context.read<LocationSelectionCubit>().setSelectedSearchLocation(location);
-    widget.onLocationSelected?.call(location);
-  }
 }

@@ -1,10 +1,10 @@
 // Package imports:
 import 'package:connectivity_plus/connectivity_plus.dart';
-import 'package:customer_app/features/auth/data/datasources/location_remote_data_source.dart';
-import 'package:customer_app/features/auth/data/repositories/location_repositories_impl.dart';
-import 'package:customer_app/features/auth/domain/repositories/location_repository.dart';
-import 'package:customer_app/features/auth/domain/usecases/location_usercase.dart';
-import 'package:customer_app/features/auth/presentation/bloc/location/location_bloc.dart';
+import 'package:customer_app/features/location/data/datasource/location_remote_data_source.dart';
+import 'package:customer_app/features/location/data/repositories/location_repositories_impl.dart';
+import 'package:customer_app/features/location/domain/repositories/location_repository.dart';
+import 'package:customer_app/features/location/domain/usecase/location_usercase.dart';
+import 'package:customer_app/features/location/presentation/bloc/location/location_bloc.dart';
 import 'package:customer_app/features/home/data/repositories/shop_repo_impl.dart';
 import 'package:customer_app/features/home/presentation/bloc/shop/shop_bloc.dart';
 import 'package:dio/dio.dart';
