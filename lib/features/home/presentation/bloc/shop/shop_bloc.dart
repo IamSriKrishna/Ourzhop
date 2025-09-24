@@ -1,4 +1,4 @@
-import 'package:customer_app/features/home/data/models/category_model.dart';
+import 'package:customer_app/common/network/models/api_envelope.dart';
 import 'package:customer_app/features/home/data/models/search_model.dart';
 import 'package:customer_app/features/home/data/models/shop_model.dart';
 import 'package:customer_app/features/home/domain/usecase/search_usecase.dart';
@@ -54,7 +54,7 @@ class ShopBloc extends Bloc<ShopEvent, ShopState> {
   ) async {
     final currentState = state;
     if (currentState is ShopLoaded &&
-        currentState.meta.hasMore &&
+        (currentState.meta.hasMore ?? false) &&
         !currentState.isLoadingMore) {
       emit(currentState.copyWith(isLoadingMore: true));
 

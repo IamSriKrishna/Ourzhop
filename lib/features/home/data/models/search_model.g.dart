@@ -34,7 +34,7 @@ SearchAutocompleteResponseModel _$SearchAutocompleteResponseModelFromJson(
       data: (json['data'] as List<dynamic>)
           .map((e) => SearchResultModel.fromJson(e as Map<String, dynamic>))
           .toList(),
-      meta: MetaModel.fromJson(json['meta'] as Map<String, dynamic>),
+      meta: ApiMeta.fromJson(json['meta'] as Map<String, dynamic>),
     );
 
 Map<String, dynamic> _$SearchAutocompleteResponseModelToJson(

@@ -16,7 +16,7 @@ class CategoryLoading extends CategoryState {
 @immutable
 class CategoryLoaded extends CategoryState {
   final List<CategoryModel> categories;
-  final MetaModel meta;
+  final ApiMeta meta;
   final bool isLoadingMore;
   final String? error;
 
@@ -29,7 +29,7 @@ class CategoryLoaded extends CategoryState {
 
   CategoryLoaded copyWith({
     List<CategoryModel>? categories,
-    MetaModel? meta,
+    ApiMeta? meta,
     bool? isLoadingMore,
     String? error,
   }) {

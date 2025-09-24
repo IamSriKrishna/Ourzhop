@@ -40,7 +40,7 @@ CategoriesResponseModel _$CategoriesResponseModelFromJson(
       data: (json['data'] as List<dynamic>)
           .map((e) => CategoryModel.fromJson(e as Map<String, dynamic>))
           .toList(),
-      meta: MetaModel.fromJson(json['meta'] as Map<String, dynamic>),
+      meta: ApiMeta.fromJson(json['meta'] as Map<String, dynamic>),
     );
 
 Map<String, dynamic> _$CategoriesResponseModelToJson(
@@ -50,18 +50,4 @@ Map<String, dynamic> _$CategoriesResponseModelToJson(
       'message': instance.message,
       'data': instance.data,
       'meta': instance.meta,
-    };
-
-MetaModel _$MetaModelFromJson(Map<String, dynamic> json) => MetaModel(
-      requestId: json['request_id'] as String,
-      timestamp: DateTime.parse(json['timestamp'] as String),
-      hasMore: json['has_more'] as bool,
-      nextCursor: json['next_cursor'] as String?,
-    );
-
-Map<String, dynamic> _$MetaModelToJson(MetaModel instance) => <String, dynamic>{
-      'request_id': instance.requestId,
-      'timestamp': instance.timestamp.toIso8601String(),
-      'has_more': instance.hasMore,
-      'next_cursor': instance.nextCursor,
     };

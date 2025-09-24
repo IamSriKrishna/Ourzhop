@@ -1,4 +1,4 @@
-import 'package:customer_app/features/home/data/models/category_model.dart';
+import 'package:customer_app/common/network/models/api_envelope.dart';
 import 'package:customer_app/features/home/domain/entities/search_entities.dart';
 import 'package:flutter/foundation.dart' show immutable;
 import 'package:json_annotation/json_annotation.dart';
@@ -29,7 +29,7 @@ class SearchAutocompleteResponseModel {
   final String status;
   final String message;
   final List<SearchResultModel> data;
-  final MetaModel meta;
+  final ApiMeta meta;
 
   const SearchAutocompleteResponseModel({
     required this.status,

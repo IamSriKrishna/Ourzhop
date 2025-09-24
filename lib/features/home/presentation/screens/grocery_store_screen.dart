@@ -1,7 +1,7 @@
 import 'package:customer_app/constants/app_route_constants.dart';
 import 'package:customer_app/core/themes/app_colors.dart';
-import 'package:customer_app/features/home/cubit/cart/cart_cubit.dart';
-import 'package:customer_app/features/home/cubit/cart/cart_state.dart';
+import 'package:customer_app/features/home/presentation/cubit/cart/cart_cubit.dart';
+import 'package:customer_app/features/home/presentation/cubit/cart/cart_state.dart';
 import 'package:customer_app/features/home/presentation/models/product_model.dart';
 import 'package:customer_app/features/home/widgets/cart_bottom_widgets.dart';
 import 'package:flutter/material.dart';

@@ -1,4 +1,5 @@
 // Flutter imports:
+import 'package:customer_app/common/network/models/api_envelope.dart';
 import 'package:customer_app/features/home/data/models/category_model.dart';
 import 'package:customer_app/features/home/domain/usecase/category_usecase.dart';
 import 'package:flutter/foundation.dart' show immutable;
@@ -49,7 +50,7 @@ class CategoryBloc extends Bloc<CategoryEvent, CategoryState> {
   ) async {
     final currentState = state;
     if (currentState is CategoryLoaded &&
-        currentState.meta.hasMore &&
+        (currentState.meta.hasMore ?? false) &&
         !currentState.isLoadingMore) {
       emit(currentState.copyWith(isLoadingMore: true));
 

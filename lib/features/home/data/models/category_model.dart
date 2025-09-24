@@ -1,4 +1,5 @@
 // Flutter imports:
+import 'package:customer_app/common/network/models/api_envelope.dart';
 import 'package:customer_app/features/home/domain/entities/category_entities.dart';
 import 'package:flutter/foundation.dart' show immutable;
 
@@ -34,7 +35,7 @@ class CategoriesResponseModel {
   final String status;
   final String message;
   final List<CategoryModel> data;
-  final MetaModel meta;
+  final ApiMeta meta;
 
   const CategoriesResponseModel({
     required this.status,
@@ -57,18 +58,3 @@ class CategoriesResponseModel {
   );
 }
 
-@immutable
-@JsonSerializable(fieldRename: FieldRename.snake)
-class MetaModel extends MetaEntity {
-  const MetaModel({
-    required super.requestId,
-    required super.timestamp,
-    required super.hasMore,
-    super.nextCursor,
-  });
-
-  factory MetaModel.fromJson(Map<String, dynamic> json) =>
-      _$MetaModelFromJson(json);
-
-  Map<String, dynamic> toJson() => _$MetaModelToJson(this);
-}

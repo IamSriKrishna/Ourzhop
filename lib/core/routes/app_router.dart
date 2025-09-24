@@ -4,7 +4,7 @@
 import 'package:customer_app/features/location/presentation/screen/location_selection_screen.dart';
 import 'package:customer_app/features/cart/presentation/screen/cart_screen.dart';
 import 'package:customer_app/features/category/presentation/screens/category_screen.dart';
-import 'package:customer_app/features/home/cubit/cart/cart_cubit.dart';
+import 'package:customer_app/features/home/presentation/cubit/cart/cart_cubit.dart';
 import 'package:customer_app/features/home/presentation/screens/grocery_store_screen.dart';
 import 'package:customer_app/features/home/presentation/screens/product_detail_screen.dart';
 import 'package:customer_app/features/home/presentation/screens/search_screen.dart';

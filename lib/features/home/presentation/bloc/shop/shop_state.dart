@@ -16,7 +16,7 @@ class ShopLoading extends ShopState {
 @immutable
 class ShopLoaded extends ShopState {
   final List<ShopModel> shops;
-  final MetaModel meta;
+  final ApiMeta meta;
   final bool isLoadingMore;
   final String? error;
 
@@ -29,7 +29,7 @@ class ShopLoaded extends ShopState {
 
   ShopLoaded copyWith({
     List<ShopModel>? shops,
-    MetaModel? meta,
+    ApiMeta? meta,
     bool? isLoadingMore,
     String? error,
   }) {
@@ -58,7 +58,7 @@ class SearchLoading extends ShopState {
 @immutable
 class SearchResultsLoaded extends ShopState {
   final List<SearchResultModel> searchResults;
-  final MetaModel meta;
+  final ApiMeta meta;
   final String query;
 
   SearchResultsLoaded({

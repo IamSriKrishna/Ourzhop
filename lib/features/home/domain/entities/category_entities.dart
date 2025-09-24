@@ -1,4 +1,5 @@
 // Flutter imports:
+import 'package:customer_app/common/network/models/api_envelope.dart';
 import 'package:flutter/foundation.dart' show immutable;
 
 @immutable
@@ -31,27 +32,12 @@ class CategoriesResponseEntity {
   final String status;
   final String message;
   final List<CategoryEntity> data;
-  final MetaEntity meta;
+  final ApiMeta meta;
 
   const CategoriesResponseEntity({
     required this.status,
     required this.message,
     required this.data,
     required this.meta,
-  });
-}
-
-@immutable
-class MetaEntity {
-  final String requestId;
-  final DateTime timestamp;
-  final bool hasMore;
-  final String? nextCursor;
-
-  const MetaEntity({
-    required this.requestId,
-    required this.timestamp,
-    required this.hasMore,
-    this.nextCursor,
   });
 }

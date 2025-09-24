@@ -1,5 +1,5 @@
-import 'package:customer_app/features/home/cubit/cart/cart_cubit.dart';
-import 'package:customer_app/features/home/cubit/cart/cart_state.dart';
+import 'package:customer_app/features/home/presentation/cubit/cart/cart_cubit.dart';
+import 'package:customer_app/features/home/presentation/cubit/cart/cart_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:customer_app/core/themes/app_colors.dart';

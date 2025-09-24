@@ -1,5 +1,4 @@
-
-import 'package:customer_app/features/home/domain/entities/category_entities.dart';
+import 'package:customer_app/common/network/models/api_envelope.dart';
 import 'package:flutter/foundation.dart' show immutable;
 
 @immutable
@@ -42,7 +41,7 @@ class ShopLocationResponseEntity {
   final String status;
   final String message;
   final List<ShopEntity> data;
-  final MetaEntity meta;
+  final ApiMeta meta;
 
   const ShopLocationResponseEntity({
     required this.status,
