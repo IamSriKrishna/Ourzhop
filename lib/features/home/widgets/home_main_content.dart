@@ -1,6 +1,6 @@
 import 'package:customer_app/features/home/widgets/home_content_subwidget.dart';
-import 'package:customer_app/features/home/widgets/reusable/nearby_shops_section.dart';
-import 'package:customer_app/features/home/widgets/reusable/shop_list_builder.dart';
+import 'package:customer_app/features/home/widgets/nearby_shops_section.dart';
+import 'package:customer_app/features/home/widgets/shop_list_builder.dart';
 import 'package:flutter/material.dart';
 
 class HomeMainContent extends StatelessWidget {

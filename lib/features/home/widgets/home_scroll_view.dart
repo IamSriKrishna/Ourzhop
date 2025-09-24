@@ -4,8 +4,8 @@ import 'package:customer_app/features/auth/data/models/user_model.dart';
 import 'package:customer_app/features/home/presentation/cubit/location_cubit.dart';
 import 'package:customer_app/features/home/presentation/bloc/shop/shop_bloc.dart';
 import 'package:customer_app/features/home/widgets/home_content_widgets.dart';
-import 'package:customer_app/features/home/widgets/reusable/home_main_content.dart';
-import 'package:customer_app/features/home/widgets/reusable/load_more_button.dart';
+import 'package:customer_app/features/home/widgets/home_main_content.dart';
+import 'package:customer_app/features/home/widgets/load_more_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 

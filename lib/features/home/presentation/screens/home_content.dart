@@ -1,10 +1,10 @@
-
 import 'package:customer_app/core/services/auth_preference_service.dart';
-import 'package:customer_app/features/home/widgets/reusable/async_user_wrapper.dart';
-import 'package:customer_app/features/home/widgets/reusable/home_bloc_provider.dart';
-import 'package:customer_app/features/home/widgets/reusable/home_scroll_view.dart';
+import 'package:customer_app/features/home/widgets/async_user_wrapper.dart';
+import 'package:customer_app/features/home/widgets/home_bloc_provider.dart';
+import 'package:customer_app/features/home/widgets/home_scroll_view.dart';
 import 'package:customer_app/service_locator.dart';
 import 'package:flutter/material.dart';
+
 class HomeContent extends StatefulWidget {
   const HomeContent({super.key});
 

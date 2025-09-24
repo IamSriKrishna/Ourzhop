@@ -1,6 +1,6 @@
 // location_cubit.dart
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:customer_app/features/home/widgets/location_helper.dart';
+import 'package:customer_app/common/network/helpers/location_helper.dart';
 
 class LocationState {
   final double? lat;

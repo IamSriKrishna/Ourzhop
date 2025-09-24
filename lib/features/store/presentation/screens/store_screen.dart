@@ -2,7 +2,7 @@ import 'package:customer_app/features/home/presentation/cubit/cart/cart_cubit.da
 import 'package:customer_app/features/home/widgets/cart_bottom_widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:customer_app/features/home/widgets/store_widgets.dart';
+import 'package:customer_app/features/store/presentation/widgets/store_widgets.dart';
 
 class StoreScreen extends StatelessWidget {
   const StoreScreen({super.key});

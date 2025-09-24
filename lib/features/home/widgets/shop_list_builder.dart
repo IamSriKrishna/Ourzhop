@@ -1,5 +1,5 @@
 import 'package:customer_app/features/home/presentation/bloc/shop/shop_bloc.dart';
-import 'package:customer_app/features/home/widgets/reusable/shop_state_widgets.dart';
+import 'package:customer_app/features/home/widgets/shop_state_widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 

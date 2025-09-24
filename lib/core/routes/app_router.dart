@@ -5,11 +5,11 @@ import 'package:customer_app/features/location/presentation/screen/location_sele
 import 'package:customer_app/features/cart/presentation/screen/cart_screen.dart';
 import 'package:customer_app/features/category/presentation/screens/category_screen.dart';
 import 'package:customer_app/features/home/presentation/cubit/cart/cart_cubit.dart';
-import 'package:customer_app/features/home/presentation/screens/grocery_store_screen.dart';
+import 'package:customer_app/features/store/presentation/screens/grocery_store_screen.dart';
 import 'package:customer_app/features/home/presentation/screens/product_detail_screen.dart';
 import 'package:customer_app/features/home/presentation/screens/search_screen.dart';
-import 'package:customer_app/features/home/presentation/screens/store_screen.dart';
-import 'package:customer_app/features/home/presentation/screens/store_screen_list.dart';
+import 'package:customer_app/features/store/presentation/screens/store_screen.dart';
+import 'package:customer_app/features/store/presentation/screens/store_screen_list.dart';
 import 'package:flutter/material.dart';
 
 // Package imports:
