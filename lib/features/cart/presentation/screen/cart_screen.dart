@@ -54,6 +54,28 @@ class _CartScreenContent extends StatelessWidget {
         return FutureBuilder<UserModel?>(
             future: authPrefs.getUser(),
             builder: (ctx, snap) {
+              debugPrint("Status: ${snap.connectionState}");
+              if (snap.connectionState == ConnectionState.waiting) {
+                return Scaffold(
+                  backgroundColor: colorScheme.surface,
+                  body: Center(
+                    child:
+                        CircularProgressIndicator(color: colorScheme.primary),
+                  ),
+                );
+              }
+
+              if (snap.hasError) {
+                return Scaffold(
+                  backgroundColor: colorScheme.surface,
+                  body: Center(
+                    child: Text(
+                      'Error: ${snap.error}',
+                      style: TextStyle(color: colorScheme.error),
+                    ),
+                  ),
+                );
+              }
               return Scaffold(
                 backgroundColor: colorScheme.surface,
                 body: CustomScrollView(

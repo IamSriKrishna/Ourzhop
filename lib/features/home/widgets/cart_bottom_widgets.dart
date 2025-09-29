@@ -1,8 +1,10 @@
+import 'package:customer_app/constants/app_route_constants.dart';
 import 'package:customer_app/features/home/presentation/cubit/cart/cart_cubit.dart';
 import 'package:customer_app/features/home/presentation/cubit/cart/cart_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:customer_app/core/themes/app_colors.dart';
+import 'package:go_router/go_router.dart';
 
 class CartBottomWidget extends StatelessWidget {
   const CartBottomWidget({super.key});
@@ -16,7 +18,6 @@ class CartBottomWidget extends StatelessWidget {
 
       return Container(
         decoration: const BoxDecoration(
-          // Completely transparent background with no shadow
           color: Colors.transparent,
         ),
         child: Padding(
@@ -93,13 +94,8 @@ class CartBottomWidget extends StatelessWidget {
               const SizedBox(width: 12),
               GestureDetector(
                 onTap: () {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text(
-                          'Proceeding to checkout with ${state.totalItems} items'),
-                      backgroundColor: context.appColors.primary,
-                    ),
-                  );
+                  context.go(AppRoutes.cartScreen);
+                 
                 },
                 child: Container(
                   padding: const EdgeInsets.symmetric(
@@ -256,14 +252,7 @@ class CartBottomSheet extends StatelessWidget {
                       child: ElevatedButton(
                         onPressed: () {
                           Navigator.pop(context);
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: Text(
-                                'Proceeding to checkout with ${state.totalItems} items worth ₹${state.totalAmount.toStringAsFixed(0)}',
-                              ),
-                              backgroundColor: context.appColors.primary,
-                            ),
-                          );
+                          context.go(AppRoutes.cartScreen);
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: context.appColors.primary,

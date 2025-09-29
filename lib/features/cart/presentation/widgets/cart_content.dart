@@ -32,6 +32,7 @@ class CartContent extends StatelessWidget {
             const CartCouponSection(),
             CartPaymentDetails(cartState: cartState),
             const CartDeliveryBanner(),
+            SizedBox(height:100),
           ],
         ),
       ),
