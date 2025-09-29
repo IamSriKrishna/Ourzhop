@@ -8,4 +8,6 @@ class AppIcons {
   static const String timing = "$routeUrl/timing.png";
   static const String store = "$routeUrl/store.png";
   static const String filterList = "$routeUrl/filter_list.png";
+  static const String cart = "$routeUrl/cart.png";
+  static const String coupon = "$routeUrl/coupon.png";
 }

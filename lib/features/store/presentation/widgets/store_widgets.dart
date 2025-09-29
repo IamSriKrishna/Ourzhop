@@ -210,7 +210,6 @@ class StoreWidgets {
   }
 
 static void _showFilterBottomSheet(BuildContext context) {
-  // Get the CartCubit instance before showing the bottom sheet
   final cartCubit = context.read<CartCubit>();
   
   showModalBottomSheet(
@@ -218,7 +217,6 @@ static void _showFilterBottomSheet(BuildContext context) {
     isScrollControlled: true,
     backgroundColor: Colors.transparent,
     builder: (BuildContext context) {
-      // Provide the existing CartCubit to the bottom sheet
       return BlocProvider<CartCubit>.value(
         value: cartCubit,
         child: Container(
@@ -232,7 +230,6 @@ static void _showFilterBottomSheet(BuildContext context) {
           ),
           child: Column(
             children: [
-              // Handle bar
               Container(
                 margin: const EdgeInsets.only(top: 12, bottom: 20),
                 width: 40,
@@ -242,7 +239,6 @@ static void _showFilterBottomSheet(BuildContext context) {
                   borderRadius: BorderRadius.circular(2),
                 ),
               ),
-              // Header with close button
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20),
                 child: Row(
@@ -353,7 +349,6 @@ static void _showFilterBottomSheet(BuildContext context) {
   );
 }
 
-// Fixed buildFilterContent method
 static Widget _buildFilterContent(BuildContext context) {
   final filterSections = [
     {
@@ -376,18 +371,14 @@ static Widget _buildFilterContent(BuildContext context) {
 
   return BlocConsumer<CartCubit, CartState>(
     listener: (context, state) {
-      // Empty listener - we'll handle initialization in builder
     },
     builder: (context, state) {
-      // Initialize filters if they haven't been initialized yet
       if (state.selectedOptions.isEmpty) {
-        // Initialize filters synchronously
         WidgetsBinding.instance.addPostFrameCallback((_) {
           if (context.mounted) {
             context.read<CartCubit>().initializeFilters(filterSections);
           }
         });
-        // Return loading indicator while initializing
         return const Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -478,7 +469,6 @@ static Widget _buildFilterContent(BuildContext context) {
               padding: const EdgeInsets.all(16),
               child: Builder(
                 builder: (context) {
-                  // Validate selected section index
                   if (state.selectedSectionIndex >= filterSections.length ||
                       state.selectedSectionIndex < 0) {
                     return const Center(child: Text('Invalid section selected'));
@@ -488,7 +478,6 @@ static Widget _buildFilterContent(BuildContext context) {
                   final sectionTitle = currentSection['title'] as String;
                   final options = currentSection['options'] as List<String>;
                   
-                  // Check if this section exists in selectedOptions and has correct length
                   if (!state.selectedOptions.containsKey(sectionTitle) ||
                       state.selectedOptions[sectionTitle]!.length != options.length) {
                     return const Center(

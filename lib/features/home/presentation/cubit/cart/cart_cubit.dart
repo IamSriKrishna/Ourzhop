@@ -10,7 +10,6 @@ class CartCubit extends Cubit<CartState> {
     }
   }
 
-  // Cart methods
   void addItem(CartItem item) {
     final currentItems = List<CartItem>.from(state.items);
     final existingItemIndex = currentItems.indexWhere((i) => i.id == item.id);
@@ -76,18 +75,17 @@ class CartCubit extends Cubit<CartState> {
     _safeEmit(state.copyWith(isVisible: false));
   }
 
-  // Selected Variants Management
   void selectVariant(String productId, String variantId) {
     final updatedVariants = Map<String, String>.from(state.selectedVariants);
     updatedVariants[productId] = variantId;
-    
+
     _safeEmit(state.copyWith(selectedVariants: updatedVariants));
   }
 
   void clearVariantSelection(String productId) {
     final updatedVariants = Map<String, String>.from(state.selectedVariants);
     updatedVariants.remove(productId);
-    
+
     _safeEmit(state.copyWith(selectedVariants: updatedVariants));
   }
 
@@ -95,19 +93,18 @@ class CartCubit extends Cubit<CartState> {
     return state.selectedVariants[productId];
   }
 
-  // Filter methods
   void initializeFilters(List<Map<String, dynamic>> filterSections) {
     if (state.selectedOptions.isNotEmpty) {
       return;
     }
-    
+
     Map<String, List<bool>> selectedOptions = {};
     for (var section in filterSections) {
       final sectionTitle = section['title'] as String;
       final options = section['options'] as List<String>;
       selectedOptions[sectionTitle] = List.filled(options.length, false);
     }
-    
+
     _safeEmit(state.copyWith(
       selectedOptions: selectedOptions,
       selectedSectionIndex: 0,
@@ -122,19 +119,20 @@ class CartCubit extends Cubit<CartState> {
 
   void toggleOption(String sectionTitle, int optionIndex) {
     final updatedOptions = Map<String, List<bool>>.from(state.selectedOptions);
-    
+
     if (!updatedOptions.containsKey(sectionTitle)) {
       return;
     }
-    
+
     final sectionOptions = updatedOptions[sectionTitle]!;
     if (optionIndex < 0 || optionIndex >= sectionOptions.length) {
       return;
     }
-    
+
     updatedOptions[sectionTitle] = List.from(sectionOptions);
-    updatedOptions[sectionTitle]![optionIndex] = !updatedOptions[sectionTitle]![optionIndex];
-    
+    updatedOptions[sectionTitle]![optionIndex] =
+        !updatedOptions[sectionTitle]![optionIndex];
+
     _safeEmit(state.copyWith(selectedOptions: updatedOptions));
   }
 
@@ -142,12 +140,12 @@ class CartCubit extends Cubit<CartState> {
     if (state.selectedOptions.isEmpty) {
       return;
     }
-    
+
     final resetOptions = <String, List<bool>>{};
     for (var entry in state.selectedOptions.entries) {
       resetOptions[entry.key] = List.filled(entry.value.length, false);
     }
-    
+
     _safeEmit(state.copyWith(
       selectedSectionIndex: 0,
       selectedOptions: resetOptions,
@@ -161,7 +159,33 @@ class CartCubit extends Cubit<CartState> {
     ));
   }
 
-  void applyFilters() {
-    // Implementation for applying filters
+  void applyFilters() {}
+
+  void selectDeliveryType(DeliveryType type) {
+    _safeEmit(state.copyWith(selectedDeliveryType: type));
+  }
+
+  void selectAddressType(AddressType type) {
+    _safeEmit(state.copyWith(selectedAddressType: type));
+  }
+
+  void updateAddressField(String field, String value) {
+    final updatedFields = Map<String, String>.from(state.addressFields);
+    updatedFields[field] = value;
+    _safeEmit(state.copyWith(addressFields: updatedFields));
+  }
+
+  void resetAddressForm() {
+    _safeEmit(state.copyWith(
+      addressFields: const {},
+      selectedAddressType: AddressType.home,
+    ));
+  }
+
+  void addAddress() {
+    if (!state.hasCompleteAddress) {
+      return;
+    }
+    _safeEmit(state);
   }
 }

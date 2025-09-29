@@ -1,5 +1,9 @@
 import 'package:equatable/equatable.dart';
 
+enum AddressType { home, office, room }
+
+enum DeliveryType { delivery, pickup }
+
 class CartItem {
   final String id;
   final String productId;
@@ -52,14 +56,20 @@ class CartState extends Equatable {
   final bool isVisible;
   final int selectedSectionIndex;
   final Map<String, List<bool>> selectedOptions;
-  final Map<String, String> selectedVariants; // New field for selected variants
+  final Map<String, String> selectedVariants;
+  final DeliveryType selectedDeliveryType;
+  final AddressType selectedAddressType;
+  final Map<String, String> addressFields;
 
   const CartState({
     this.items = const [],
     this.isVisible = false,
     this.selectedSectionIndex = 0,
     this.selectedOptions = const {},
-    this.selectedVariants = const {}, // Initialize selected variants
+    this.selectedVariants = const {},
+    this.selectedDeliveryType = DeliveryType.delivery,
+    this.selectedAddressType = AddressType.home,
+    this.addressFields = const {},
   });
 
   CartState copyWith({
@@ -68,6 +78,9 @@ class CartState extends Equatable {
     int? selectedSectionIndex,
     Map<String, List<bool>>? selectedOptions,
     Map<String, String>? selectedVariants,
+    DeliveryType? selectedDeliveryType,
+    AddressType? selectedAddressType,
+    Map<String, String>? addressFields,
   }) {
     return CartState(
       items: items ?? this.items,
@@ -75,6 +88,9 @@ class CartState extends Equatable {
       selectedSectionIndex: selectedSectionIndex ?? this.selectedSectionIndex,
       selectedOptions: selectedOptions ?? this.selectedOptions,
       selectedVariants: selectedVariants ?? this.selectedVariants,
+      selectedDeliveryType: selectedDeliveryType ?? this.selectedDeliveryType,
+      selectedAddressType: selectedAddressType ?? this.selectedAddressType,
+      addressFields: addressFields ?? this.addressFields,
     );
   }
 
@@ -96,13 +112,14 @@ class CartState extends Equatable {
   }
 
   bool hasActiveFilters() {
-    return selectedOptions.values.any((options) => options.any((selected) => selected));
+    return selectedOptions.values
+        .any((options) => options.any((selected) => selected));
   }
 
   List<String> getSelectedOptionsForSection(String sectionTitle) {
     final options = selectedOptions[sectionTitle];
     if (options == null) return [];
-    
+
     List<String> selected = [];
     for (int i = 0; i < options.length; i++) {
       if (options[i]) {
@@ -112,11 +129,35 @@ class CartState extends Equatable {
     return selected;
   }
 
-  // Helper method to get selected variant for a product
   String? getSelectedVariant(String productId) {
     return selectedVariants[productId];
   }
 
+  String getAddressField(String field) {
+    return addressFields[field] ?? '';
+  }
+
+  bool get hasCompleteAddress {
+    final requiredFields = [
+      'House / Flat / Block No',
+      'Apartment / Road / Area',
+      'City & State',
+      'Zip Code'
+    ];
+
+    return requiredFields.any((field) =>
+        addressFields.containsKey(field) && addressFields[field]!.isNotEmpty);
+  }
+
   @override
-  List<Object> get props => [items, isVisible, selectedSectionIndex, selectedOptions, selectedVariants];
+  List<Object> get props => [
+        items,
+        isVisible,
+        selectedSectionIndex,
+        selectedOptions,
+        selectedVariants,
+        selectedDeliveryType,
+        selectedAddressType,
+        addressFields,
+      ];
 }

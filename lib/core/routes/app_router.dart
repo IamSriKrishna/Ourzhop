@@ -4,7 +4,6 @@
 import 'package:customer_app/features/location/presentation/screen/location_selection_screen.dart';
 import 'package:customer_app/features/cart/presentation/screen/cart_screen.dart';
 import 'package:customer_app/features/category/presentation/screens/category_screen.dart';
-import 'package:customer_app/features/home/presentation/cubit/cart/cart_cubit.dart';
 import 'package:customer_app/features/store/presentation/screens/grocery_store_screen.dart';
 import 'package:customer_app/features/home/presentation/screens/product_detail_screen.dart';
 import 'package:customer_app/features/home/presentation/screens/search_screen.dart';
@@ -49,6 +48,8 @@ class AppRouter {
             child: HomeScreen(screen: child),
           ),
           routes: [
+            //cart screen
+
             // Home Tab
             GoRoute(
               path: AppRoutes.home,
@@ -63,6 +64,13 @@ class AppRouter {
                 //     return DetailsScreen(id: id);
                 //   },
                 // ),
+                 GoRoute(
+                  parentNavigatorKey: AppRouter.rootNavigatorKey,
+                  path: AppRoutes.cartScreen,
+                  name: AppRoutes.cartScreen,
+                  builder: (context, state) => CartScreen(),
+                  routes: [],
+                ),
                 GoRoute(
                     parentNavigatorKey: AppRouter.rootNavigatorKey,
                     path: AppRoutes.storeScreen,
@@ -76,13 +84,7 @@ class AppRouter {
                           path: AppRoutes.groceryStoreScreen,
                           name: AppRoutes.groceryStoreScreen,
                           builder: (context, state) {
-                            final cartCubit = state.extra as CartCubit;
-                            return BlocProvider.value(
-                              value: cartCubit,
-                              child: GroceryHomePage(
-                                cartCubit: cartCubit,
-                              ),
-                            );
+                            return GroceryHomePage();
                           },
                           routes: [
                             GoRoute(
@@ -90,13 +92,7 @@ class AppRouter {
                                 path: AppRoutes.productScreen,
                                 name: AppRoutes.productScreen,
                                 builder: (context, state) {
-                                  final cartCubit = state.extra as CartCubit;
-                                  return BlocProvider.value(
-                                    value: cartCubit,
-                                    child: ProductDetailScreen(
-                                      cartCubit: cartCubit,
-                                    ),
-                                  );
+                                  return ProductDetailScreen();
                                 })
                           ]),
                     ]),
@@ -143,16 +139,12 @@ class AppRouter {
                         builder: (context, state) => StoreScreenList(),
                       ),
                     ]),
+               
               ],
-            ),
-            GoRoute(
-              path: AppRoutes.cartScreen,
-              name: AppRoutes.cartScreen,
-              builder: (context, state) => CartContent(),
-              routes: [],
             ),
           ],
         ),
+
         // Login Route (Outside ShellRoute)
         GoRoute(
           path: AppRoutes.login,

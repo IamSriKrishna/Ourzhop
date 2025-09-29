@@ -1,5 +1,6 @@
 // Updated main.dart with automatic theme switching
 import 'package:customer_app/core/utils/auto_theme_listener.dart';
+import 'package:customer_app/features/home/presentation/cubit/cart/cart_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -65,6 +66,10 @@ class MyApp extends StatelessWidget {
         BlocProvider(create: (_) => serviceLocator<LocalizationBloc>()),
         BlocProvider(create: (_) => serviceLocator<ConnectivityBloc>()),
         BlocProvider<AuthBloc>(create: (context) => serviceLocator<AuthBloc>()),
+        //cart
+        BlocProvider(
+          create: (context) => CartCubit(),
+        )
       ],
       child: AutoThemeListener(
         child: BlocBuilder<ThemeBloc, ThemeState>(

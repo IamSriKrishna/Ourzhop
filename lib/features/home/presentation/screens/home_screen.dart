@@ -1,5 +1,8 @@
 // Flutter imports:
 import 'package:customer_app/constants/app_icons.dart';
+import 'package:customer_app/core/themes/app_colors.dart';
+import 'package:customer_app/features/home/presentation/cubit/cart/cart_cubit.dart';
+import 'package:customer_app/features/home/presentation/cubit/cart/cart_state.dart';
 import 'package:flutter/material.dart';
 
 // Package imports:
@@ -11,7 +14,6 @@ import 'package:customer_app/common/widget/app_named_navigation_bar_item.dart';
 import 'package:customer_app/constants/app_route_constants.dart';
 import 'package:customer_app/core/app_extension.dart';
 import 'package:customer_app/core/bottom_navigation/bottom_navigation_cubit.dart';
-
 class HomeScreen extends StatelessWidget {
   final Widget screen;
 
@@ -20,10 +22,26 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final List<AppNamedNavigationBarItem> tabs = _buildTabs(context);
+    
     return Scaffold(
       resizeToAvoidBottomInset: false,
       body: screen,
-      floatingActionButton: _buildFloatingBottomNavigation(context, tabs),
+      floatingActionButton: BlocBuilder<CartCubit, CartState>(
+        buildWhen: (previous, current) => 
+          previous.totalItems != current.totalItems,
+        builder: (context, cartState) {
+          return Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              _buildFloatingBottomNavigation(context, tabs),
+              // Only show cart if there are items
+              if (cartState.totalItems > 0) 
+                _cart(context, cartState.totalItems),
+            ],
+          );
+        },
+      ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
     );
   }
@@ -104,6 +122,52 @@ class HomeScreen extends StatelessWidget {
           ),
         );
       },
+    );
+  }
+
+  Widget _cart(BuildContext context, int itemCount) {
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 300),
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(35),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.1),
+            blurRadius: 10,
+            offset: const Offset(0, 5),
+          ),
+        ],
+      ),
+      child: GestureDetector(
+        onTap: () {
+          context.go(AppRoutes.cartScreen);
+        },
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 200),
+          width: 50,
+          height: 50,
+          decoration: const BoxDecoration(
+            color: Colors.white,
+            shape: BoxShape.circle,
+          ),
+          child: Center(
+            child: IconTheme(
+              data: IconThemeData(
+                color: Colors.grey[600],
+                size: 24,
+              ),
+              child: Badge.count(
+                backgroundColor: context.appColors.primary,
+                alignment: const Alignment(5, -1.2),
+                count: itemCount,
+                child: Image.asset(AppIcons.cart),
+              ),
+            ),
+          ),
+        ),
+      ),
     );
   }
 
