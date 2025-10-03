@@ -35,7 +35,12 @@ class CustomAppBar extends StatelessWidget {
                 ),
               ),
               const SizedBox(width: 12),
-              ProfileButton(context: context),
+              ProfileButton(
+                context: context,
+                onTap: () {
+                  context.goNamed(AppRoutes.categoryProfileScreen);
+                },
+              ),
             ],
           ),
         ),

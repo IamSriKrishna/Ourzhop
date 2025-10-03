@@ -20,22 +20,26 @@ class CartCouponSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = Theme.of(context).colorScheme;
+    final isDark = theme.brightness == Brightness.dark;
     return GestureDetector(
       onTap: onTap,
       child: Container(
         margin: margin ?? const EdgeInsets.all(16),
         padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(12),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.05),
-              blurRadius: 10,
-              offset: const Offset(0, 2),
-            ),
-          ],
-        ),
+         decoration: BoxDecoration(
+       color: isDark ? null : Colors.white,
+        gradient: isDark
+            ? LinearGradient(
+                colors: [
+                  colorScheme.primary.withOpacity(0.1),
+                  colorScheme.primary.withOpacity(0.05),
+                ],
+              )
+            : null,
+        borderRadius: BorderRadius.circular(12),
+      ),
         child: Row(
           children: [
            Image.asset(AppIcons.coupon),

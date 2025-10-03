@@ -54,7 +54,6 @@ class _CartScreenContent extends StatelessWidget {
         return FutureBuilder<UserModel?>(
             future: authPrefs.getUser(),
             builder: (ctx, snap) {
-              debugPrint("Status: ${snap.connectionState}");
               if (snap.connectionState == ConnectionState.waiting) {
                 return Scaffold(
                   backgroundColor: colorScheme.surface,

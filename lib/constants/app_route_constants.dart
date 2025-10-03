@@ -21,4 +21,9 @@ class AppRoutes {
   static const String categoryScreen = '/category-screen';
   //cart
   static const String cartScreen = '/cart-screen';
+  static const String checkoutScreen = '/checkout-screen';
+  static const String orderTrackingScreen = '/order-tracking-screen';
+  //profile
+  static const String homeProfileScreen = '/home-to-profile-screen';
+  static const String categoryProfileScreen = '/category-to-profile-screen';
 }

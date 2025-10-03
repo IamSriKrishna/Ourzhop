@@ -1,4 +1,6 @@
 // widgets/cart_products_section.dart
+// ignore_for_file: deprecated_member_use
+
 import 'package:customer_app/features/home/presentation/cubit/cart/cart_cubit.dart';
 import 'package:customer_app/features/home/presentation/cubit/cart/cart_state.dart';
 import 'package:flutter/material.dart';
@@ -50,21 +52,24 @@ class CartItemWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     final colorScheme = Theme.of(context).colorScheme;
+    final isDark = theme.brightness == Brightness.dark;
 
     return Container(
       margin: margin ?? const EdgeInsets.only(bottom: 16),
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: borderRadius ?? BorderRadius.circular(12),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 10,
-            offset: const Offset(0, 2),
-          ),
-        ],
+        color: isDark ? null : Colors.white,
+        gradient: isDark
+            ? LinearGradient(
+                colors: [
+                  colorScheme.primary.withOpacity(0.1),
+                  colorScheme.primary.withOpacity(0.05),
+                ],
+              )
+            : null,
+        borderRadius: BorderRadius.circular(12),
       ),
       child: Row(
         children: [

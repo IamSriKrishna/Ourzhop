@@ -1,9 +1,12 @@
 // lib/router/app_router.dart
 
 // Flutter imports:
+import 'package:customer_app/features/checkout/presentation/screen/checkout_screen.dart';
 import 'package:customer_app/features/location/presentation/screen/location_selection_screen.dart';
 import 'package:customer_app/features/cart/presentation/screen/cart_screen.dart';
 import 'package:customer_app/features/category/presentation/screens/category_screen.dart';
+import 'package:customer_app/features/order_tracking/presentation/screen/order_tracking_screen.dart';
+import 'package:customer_app/features/profile/presentation/screen/profile_screen.dart';
 import 'package:customer_app/features/store/presentation/screens/grocery_store_screen.dart';
 import 'package:customer_app/features/home/presentation/screens/product_detail_screen.dart';
 import 'package:customer_app/features/home/presentation/screens/search_screen.dart';
@@ -56,21 +59,29 @@ class AppRouter {
               name: 'home',
               builder: (context, state) => HomeContent(),
               routes: [
-                // GoRoute(
-                //   path: AppRoutes.details,
-                //   name: 'details',
-                //   builder: (context, state) {
-                //     final id = state.pathParameters['id']!;
-                //     return DetailsScreen(id: id);
-                //   },
-                // ),
-                 GoRoute(
+                GoRoute(
                   parentNavigatorKey: AppRouter.rootNavigatorKey,
                   path: AppRoutes.cartScreen,
                   name: AppRoutes.cartScreen,
                   builder: (context, state) => CartScreen(),
-                  routes: [],
+                  routes: [
+                    GoRoute(
+                      parentNavigatorKey: AppRouter.rootNavigatorKey,
+                      path: AppRoutes.checkoutScreen,
+                      name: AppRoutes.checkoutScreen,
+                      builder: (context, state) => CheckoutScreen(),
+                      routes: [
+                        GoRoute(
+                          parentNavigatorKey: AppRouter.rootNavigatorKey,
+                          path: AppRoutes.orderTrackingScreen,
+                          name: AppRoutes.orderTrackingScreen,
+                          builder: (context, state) => OrderTrackingScreen(),
+                        ),
+                      ],
+                    ),
+                  ],
                 ),
+                //store screen
                 GoRoute(
                     parentNavigatorKey: AppRouter.rootNavigatorKey,
                     path: AppRoutes.storeScreen,
@@ -113,10 +124,16 @@ class AppRouter {
                         builder: (context, state) => StoreScreenList(),
                       ),
                     ]),
+                //Profile Screen
+                GoRoute(
+                  parentNavigatorKey: AppRouter.rootNavigatorKey,
+                  path: AppRoutes.homeProfileScreen,
+                  name: AppRoutes.homeProfileScreen,
+                  builder: (context, state) => ProfileScreen(),
+                ),
               ],
             ),
-
-            // Profile Tab
+            //category Screen
             GoRoute(
               path: AppRoutes.categoryScreen,
               name: AppRoutes.categoryScreen,
@@ -139,7 +156,13 @@ class AppRouter {
                         builder: (context, state) => StoreScreenList(),
                       ),
                     ]),
-               
+                //profile screen
+                GoRoute(
+                  parentNavigatorKey: AppRouter.rootNavigatorKey,
+                  path: AppRoutes.categoryProfileScreen,
+                  name: AppRoutes.categoryProfileScreen,
+                  builder: (context, state) => ProfileScreen(),
+                ),
               ],
             ),
           ],

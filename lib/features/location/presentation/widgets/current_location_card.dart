@@ -1,9 +1,13 @@
+
+// ignore_for_file: deprecated_member_use
+
 import 'package:customer_app/features/location/presentation/bloc/location_selector_cubit.dart';
+import 'package:customer_app/features/location/presentation/widgets/location_card_container.dart';
+import 'package:customer_app/features/location/presentation/widgets/location_card_content.dart';
+import 'package:customer_app/features/location/presentation/widgets/location_icon.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:customer_app/core/themes/app_colors.dart';
-import 'package:customer_app/core/themes/app_style.dart';
-
 class CurrentLocationCard extends StatelessWidget {
   const CurrentLocationCard({super.key});
 
@@ -18,63 +22,21 @@ class CurrentLocationCard extends StatelessWidget {
 
         return GestureDetector(
           onTap: () => cubit.getCurrentLocation(),
-          child: Container(
-            padding: const EdgeInsets.all(16.0),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(12.0),
-              border: Border.all(
-                color: hasCurrentLocation
-                    ? appColors.primary.withOpacity(0.3)
-                    : Colors.grey[200]!,
-              ),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.02),
-                  blurRadius: 4,
-                  offset: const Offset(0, 2),
-                ),
-              ],
-            ),
+          child: LocationCardContainer(
+            isSelected: hasCurrentLocation,
+            borderColor: hasCurrentLocation
+                ? appColors.primary.withOpacity(0.3)
+                : Colors.grey[200]!,
             child: Row(
               children: [
-                Container(
-                  width: 40.0,
-                  height: 40.0,
-                  decoration: BoxDecoration(
-                    color: appColors.primary,
-                    borderRadius: BorderRadius.circular(8.0),
-                  ),
-                  child: const Icon(
-                    Icons.my_location,
-                    color: Colors.white,
-                    size: 20,
-                  ),
-                ),
+                LocationIcon(backgroundColor: appColors.primary),
                 const SizedBox(width: 16.0),
                 Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        cubit.currentLocation ?? "Use current location",
-                        style: AppTypography.getBodyText(context).copyWith(
-                          fontWeight: FontWeight.w600,
-                          fontSize: 16,
-                          color: Colors.black87,
-                        ),
-                      ),
-                      const SizedBox(height: 4.0),
-                      Text(
-                        hasCurrentLocation
-                            ? "Location detected"
-                            : "Need to give location permission",
-                        style: AppTypography.getBodyText(context).copyWith(
-                          fontSize: 14,
-                          color: Colors.grey[600],
-                        ),
-                      ),
-                    ],
+                  child: LocationCardContent(
+                    title: cubit.currentLocation ?? "Use current location",
+                    subtitle: hasCurrentLocation
+                        ? "Location detected"
+                        : "Need to give location permission",
                   ),
                 ),
                 if (hasCurrentLocation)

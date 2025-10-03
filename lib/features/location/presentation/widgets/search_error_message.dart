@@ -1,32 +1,25 @@
-
 import 'package:flutter/material.dart';
 import 'package:customer_app/features/location/presentation/widgets/message_card.dart';
 
-class ErrorDisplayCard extends StatelessWidget {
+class SearchErrorMessage extends StatelessWidget {
   final String message;
-  final IconData icon;
-  final EdgeInsetsGeometry? margin;
-  final EdgeInsetsGeometry? padding;
 
-  const ErrorDisplayCard({
+  const SearchErrorMessage({
     super.key,
     required this.message,
-    this.icon = Icons.error_outline,
-    this.margin,
-    this.padding,
   });
 
   @override
   Widget build(BuildContext context) {
     return MessageCard(
       message: message,
-      icon: icon,
+      icon: Icons.error_outline,
       iconColor: Colors.red[600]!,
       backgroundColor: Colors.red[50]!,
       borderColor: Colors.red[200]!,
       textColor: Colors.red[700]!,
-      margin: margin ?? const EdgeInsets.only(top: 16.0),
-      padding: padding ?? const EdgeInsets.all(12.0),
+      margin: const EdgeInsets.only(top: 8.0),
+      padding: const EdgeInsets.all(12.0),
     );
   }
 }

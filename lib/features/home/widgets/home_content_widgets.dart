@@ -80,23 +80,28 @@ class HomeContentWidgets {
                   ),
                 ),
                 const SizedBox(width: 15),
-                Container(
-                  height: 50,
-                  width: 50,
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    shape: BoxShape.circle,
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.1),
-                        blurRadius: 4,
-                        offset: const Offset(0, 2),
-                      ),
-                    ],
-                  ),
-                  child: const Icon(
-                    Icons.person,
-                    color: Colors.black54,
+                GestureDetector(
+                  onTap: () {
+                    context.goNamed(AppRoutes.homeProfileScreen);
+                  },
+                  child: Container(
+                    height: 50,
+                    width: 50,
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      shape: BoxShape.circle,
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.1),
+                          blurRadius: 4,
+                          offset: const Offset(0, 2),
+                        ),
+                      ],
+                    ),
+                    child: const Icon(
+                      Icons.person,
+                      color: Colors.black54,
+                    ),
                   ),
                 ),
               ],
@@ -221,24 +226,18 @@ class HomeContentWidgets {
                           Padding(
                             padding: const EdgeInsets.symmetric(horizontal: 6),
                             child: HomeContentSubwidget.buildStickyCategory(
-                              "All",
-                              AppIcons.store,
-                              true,
-                              context,
-                              true
-                            ),
+                                "All", AppIcons.store, true, context, true),
                           ),
                           ...state.categories.map((category) {
                             return Padding(
                               padding:
                                   const EdgeInsets.symmetric(horizontal: 6),
                               child: HomeContentSubwidget.buildStickyCategory(
-                                category.name,
-                                category.iconUrl,
-                                false,
-                                context,
-                                false
-                              ),
+                                  category.name,
+                                  category.iconUrl,
+                                  false,
+                                  context,
+                                  false),
                             );
                           })
                         ],
@@ -295,7 +294,6 @@ class HomeContentWidgets {
               ),
             ),
             const SizedBox(height: 10),
-            // Replace the static list with dynamic shop data
             BlocBuilder<ShopBloc, ShopState>(
               builder: (context, state) {
                 switch (state) {

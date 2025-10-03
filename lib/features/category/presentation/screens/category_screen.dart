@@ -5,7 +5,6 @@ import 'package:customer_app/service_locator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-
 class CategoriesScreen extends StatefulWidget {
   const CategoriesScreen({super.key});
 
@@ -18,7 +17,7 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
-    
+
     return BlocProvider(
       create: (_) => CategoryBloc(
         getCategories: serviceLocator<GetCategoriesUseCase>(),

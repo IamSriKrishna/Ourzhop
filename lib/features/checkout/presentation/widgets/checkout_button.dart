@@ -3,14 +3,14 @@ import 'package:customer_app/features/home/presentation/cubit/cart/cart_state.da
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-class CartCheckoutBar extends StatelessWidget {
+class CheckoutButton extends StatelessWidget {
   final CartState cartState;
   final VoidCallback? onCheckout;
   final String buttonText;
   final double discountAmount;
   final EdgeInsets? padding;
 
-  const CartCheckoutBar({
+  const CheckoutButton({
     super.key,
     required this.cartState,
     this.onCheckout,
@@ -53,7 +53,7 @@ class CartCheckoutBar extends StatelessWidget {
   }
 
   void _defaultCheckoutAction(BuildContext context) {
-    context.goNamed(AppRoutes.checkoutScreen);
+    context.goNamed(AppRoutes.orderTrackingScreen);
     // Default checkout implementation
     print(
         'Checkout pressed with total: ₹${(cartState.totalAmount - discountAmount).toStringAsFixed(2)}');
