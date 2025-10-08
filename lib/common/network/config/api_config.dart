@@ -15,6 +15,9 @@ class ApiConfig {
   static const String searchApi = '/search/places/autocomplete';
   static const String searchAutocomplete = '/search/autocomplete';
 
+  static const String shops = '/shops';
+
+
   static const Map<String, String> header = <String, String>{
     'content-Type': 'application/json',
   };

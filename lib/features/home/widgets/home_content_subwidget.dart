@@ -2,6 +2,7 @@
 
 import 'package:customer_app/constants/app_route_constants.dart';
 import 'package:customer_app/core/cubit/home_content_cubit.dart';
+import 'package:customer_app/core/themes/app_colors.dart';
 import 'package:customer_app/features/home/data/models/shop_model.dart';
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
@@ -12,8 +13,8 @@ import 'package:shimmer/shimmer.dart';
 
 class HomeContentSubwidget {
   const HomeContentSubwidget._();
-  static Widget buildStickyCategory(
-      String label, String img, bool isSelected, BuildContext context,bool isAll) {
+  static Widget buildStickyCategory(String label, String img, bool isSelected,
+      BuildContext context, bool isAll) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
 
@@ -37,14 +38,16 @@ class HomeContentSubwidget {
               ),
             ],
           ),
-          child:isAll?Image.asset(img): Image.network(
-            img,
-            errorBuilder: (context, url, error) => Icon(
-              Icons.error,
-              color: colorScheme.error,
-              size: 24,
-            ),
-          ),
+          child: isAll
+              ? Image.asset(img)
+              : Image.network(
+                  img,
+                  errorBuilder: (context, url, error) => Icon(
+                    Icons.error,
+                    color: colorScheme.error,
+                    size: 24,
+                  ),
+                ),
         ),
         const SizedBox(height: 8),
         Text(
@@ -305,8 +308,20 @@ class HomeContentSubwidget {
       ),
       child: InkWell(
         onTap: () {
-          Logger().i("Shop tapped: ${shop?.shopId ?? 'default'}");
-          context.goNamed(AppRoutes.storeScreen);
+          if (shop!.shopId.isNotEmpty) {
+            Logger().e("Triggered\nShop Id:${shop.shopId}\ndata:${shop}");
+            context.pushNamed(
+              AppRoutes.storeScreen,
+              pathParameters: {'shopId': shop.shopId},
+            );
+          } else {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text('Unable to open shop: Invalid shop ID'),
+                backgroundColor: context.appColors.error,
+              ),
+            );
+          }
         },
         borderRadius: BorderRadius.circular(12),
         child: Column(

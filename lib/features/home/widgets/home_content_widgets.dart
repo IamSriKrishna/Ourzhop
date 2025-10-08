@@ -363,7 +363,7 @@ class HomeContentWidgets {
                                     RefreshShopsEvent(
                                       limit: 10,
                                       lat:
-                                          12.8738, // Replace with actual coordinates
+                                          12.8738, 
                                       lng: 80.0784,
                                     ),
                                   );

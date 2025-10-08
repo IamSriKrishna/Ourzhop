@@ -68,7 +68,7 @@ class MyApp extends StatelessWidget {
         BlocProvider<AuthBloc>(create: (context) => serviceLocator<AuthBloc>()),
         //cart
         BlocProvider(
-          create: (context) => CartCubit(),
+          create: (context) => serviceLocator<CartCubit>(),
         )
       ],
       child: AutoThemeListener(

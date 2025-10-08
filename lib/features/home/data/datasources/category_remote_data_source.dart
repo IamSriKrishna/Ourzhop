@@ -12,24 +12,25 @@ abstract class CategoryRemoteDataSource {
   });
 }
 
-class CategoryRemoteDataSourceImpl with ApiHelper implements CategoryRemoteDataSource {
+class CategoryRemoteDataSourceImpl
+    with ApiHelper
+    implements CategoryRemoteDataSource {
   final DioClient _client = serviceLocator<DioClient>();
 
-@override
-Future<CategoriesResponseModel> getCategories({
-  int? limit,
-  String? cursor,
-}) async {
-  final queryParams = <String, dynamic>{};
-  if (limit != null) queryParams['limit'] = limit;
-  if (cursor != null && cursor.isNotEmpty) queryParams['cursor'] = cursor;
+  @override
+  Future<CategoriesResponseModel> getCategories({
+    int? limit,
+    String? cursor,
+  }) async {
+    final queryParams = <String, dynamic>{};
+    if (limit != null) queryParams['limit'] = limit;
+    if (cursor != null && cursor.isNotEmpty) queryParams['cursor'] = cursor;
 
-  final response = await _client.dio.get(
-    ApiConfig.categories,
-    queryParameters: queryParams.isNotEmpty ? queryParams : null,
-  );
+    final response = await _client.dio.get(
+      ApiConfig.categories,
+      queryParameters: queryParams.isNotEmpty ? queryParams : null,
+    );
 
-  return CategoriesResponseModel.fromJson(response.data);
-}
-
+    return CategoriesResponseModel.fromJson(response.data);
+  }
 }

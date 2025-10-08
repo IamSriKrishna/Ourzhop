@@ -10,8 +10,12 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 class GroceryHomePage extends StatefulWidget {
+  final String shopId;
 
-  const GroceryHomePage({super.key, });
+  const GroceryHomePage({
+    super.key,
+    required this.shopId,
+  });
 
   @override
   State<GroceryHomePage> createState() => _GroceryHomePageState();

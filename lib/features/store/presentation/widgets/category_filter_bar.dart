@@ -13,7 +13,7 @@ class CategoryFilterBar extends StatelessWidget {
     final defaultCategories = categories ?? [
       CategoryFilter('Vegetables & Fruits', false),
       CategoryFilter('Dairy, Bread & Egg', true),
-      CategoryFilter('Biscuit', false),
+      // CategoryFilter('Biscuit', false),
     ];
 
     return SliverToBoxAdapter(

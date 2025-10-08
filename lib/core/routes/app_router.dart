@@ -2,13 +2,14 @@
 
 // Flutter imports:
 import 'package:customer_app/features/checkout/presentation/screen/checkout_screen.dart';
+import 'package:customer_app/features/home/data/models/shop_model.dart';
 import 'package:customer_app/features/location/presentation/screen/location_selection_screen.dart';
 import 'package:customer_app/features/cart/presentation/screen/cart_screen.dart';
 import 'package:customer_app/features/category/presentation/screens/category_screen.dart';
 import 'package:customer_app/features/order_tracking/presentation/screen/order_tracking_screen.dart';
 import 'package:customer_app/features/profile/presentation/screen/profile_screen.dart';
 import 'package:customer_app/features/store/presentation/screens/grocery_store_screen.dart';
-import 'package:customer_app/features/home/presentation/screens/product_detail_screen.dart';
+import 'package:customer_app/features/about_product/presentation/screen/about_product_screen.dart';
 import 'package:customer_app/features/home/presentation/screens/search_screen.dart';
 import 'package:customer_app/features/store/presentation/screens/store_screen.dart';
 import 'package:customer_app/features/store/presentation/screens/store_screen_list.dart';
@@ -84,10 +85,18 @@ class AppRouter {
                 //store screen
                 GoRoute(
                     parentNavigatorKey: AppRouter.rootNavigatorKey,
-                    path: AppRoutes.storeScreen,
+                    path: '${AppRoutes.storeScreen}/:shopId',
                     name: AppRoutes.storeScreen,
                     builder: (context, state) {
-                      return StoreScreen();
+                      final shopId = state.pathParameters['shopId'];
+
+                      if (shopId == null || shopId.isEmpty) {
+                        return const Scaffold(
+                          body: Center(child: Text('Shop not found')),
+                        );
+                      }
+
+                      return StoreScreen(shopId: shopId);
                     },
                     routes: [
                       GoRoute(
@@ -95,7 +104,8 @@ class AppRouter {
                           path: AppRoutes.groceryStoreScreen,
                           name: AppRoutes.groceryStoreScreen,
                           builder: (context, state) {
-                            return GroceryHomePage();
+                            final shopId = state.pathParameters['shopId'];
+                            return GroceryHomePage(shopId: shopId ?? '');
                           },
                           routes: [
                             GoRoute(
@@ -103,7 +113,7 @@ class AppRouter {
                                 path: AppRoutes.productScreen,
                                 name: AppRoutes.productScreen,
                                 builder: (context, state) {
-                                  return ProductDetailScreen();
+                                  return AboutProductScreen();
                                 })
                           ]),
                     ]),

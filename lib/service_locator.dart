@@ -1,5 +1,6 @@
 // Package imports:
 import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:customer_app/features/home/presentation/cubit/cart/cart_cubit.dart';
 import 'package:customer_app/features/location/data/datasource/location_remote_data_source.dart';
 import 'package:customer_app/features/location/data/repositories/location_repositories_impl.dart';
 import 'package:customer_app/features/location/domain/repositories/location_repository.dart';
@@ -7,6 +8,12 @@ import 'package:customer_app/features/location/domain/usecase/location_usercase.
 import 'package:customer_app/features/location/presentation/bloc/location/location_bloc.dart';
 import 'package:customer_app/features/home/data/repositories/shop_repo_impl.dart';
 import 'package:customer_app/features/home/presentation/bloc/shop/shop_bloc.dart';
+import 'package:customer_app/features/store/data/datasource/product_remote_data_source.dart';
+import 'package:customer_app/features/store/data/repositories/product_repo_impl.dart';
+import 'package:customer_app/features/store/domain/repositories/product_repository.dart';
+import 'package:customer_app/features/store/domain/usecase/get_shop_filters_usecase.dart';
+import 'package:customer_app/features/store/domain/usecase/product_usecase.dart';
+import 'package:customer_app/features/store/presentation/bloc/product_bloc.dart';
 import 'package:dio/dio.dart';
 import 'package:get_it/get_it.dart';
 
@@ -52,10 +59,14 @@ Future<void> initServiceLocator() async {
   // Localization handling
   _registerLocalization();
 
+  _registerProductFeatures();
+
   _registerLocationFeatures();
 
   // Connectivity handling
   _registerConnectivity();
+
+  _registerCartFeatures();
 
   // Auth Features
   _registerAuthFeatures();
@@ -90,6 +101,11 @@ void _registerConnectivity() {
       .registerLazySingleton(() => ConnectivityBloc(serviceLocator()));
 }
 
+void _registerCartFeatures() {
+  // Cubit
+  serviceLocator.registerFactory(() => CartCubit());
+}
+
 void _registerLocationFeatures() {
   // Bloc
   serviceLocator.registerFactory(
@@ -111,6 +127,34 @@ void _registerLocationFeatures() {
   // Data Sources
   serviceLocator.registerLazySingleton<LocationRemoteDataSource>(
     () => LocationRemoteDataSourceImpl(),
+  );
+}
+
+void _registerProductFeatures() {
+  serviceLocator.registerFactory(
+    () => ProductBloc(
+      getShopProducts: serviceLocator<GetShopProductsUseCase>(),
+      getShopFilters: serviceLocator<GetShopFiltersUseCase>(), 
+    ),
+  );
+
+  // Use Cases
+  serviceLocator.registerLazySingleton(
+    () => GetShopProductsUseCase(serviceLocator()),
+  );
+  
+  serviceLocator.registerLazySingleton(
+    () => GetShopFiltersUseCase(serviceLocator()),
+  );
+
+  // Repository
+  serviceLocator.registerLazySingleton<ProductRepository>(
+    () => ProductRepositoryImpl(remoteDataSource: serviceLocator()),
+  );
+
+  // Data Sources
+  serviceLocator.registerLazySingleton<ProductRemoteDataSource>(
+    () => ProductRemoteDataSourceImpl(),
   );
 }
 
